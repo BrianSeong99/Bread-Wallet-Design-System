@@ -387,6 +387,47 @@ table.map td code{font-size:var(--t-label)}
    size for page layout WITHOUT changing the layout width the design is evaluated at, so
    what we critique is exactly what ships. The current-state screenshots are 1206x2622 =
    402x874 @3x, so they match this frame precisely. */
+/* ---- Prototype player ----------------------------------------------------------------------
+   Deliberately NOT .phone. review.mjs audits every .phone on the page, and this frame holds a
+   CLONE of a screen that is already audited where it lives -- counting it twice would inflate
+   every tally and, worse, make a fix look like it landed twice. Same reason the clone carries no
+   caption: the structure check counts captions to find orphans. */
+.pframe{width:402px;border-radius:var(--radius-device-outer);background:var(--device-bezel);
+  padding:10px;box-shadow:var(--shadow-2);margin:0 auto;flex:none}
+.pstage{position:relative;width:402px;height:874px;border-radius:var(--radius-device);
+  overflow:hidden;background:var(--paper)}
+.pstage>.screen{position:absolute;inset:0;width:100%;height:100%;border-radius:var(--radius-device)}
+@media (prefers-reduced-motion:no-preference){
+  .pstage>.screen{transition:transform var(--dur-slow) var(--ease-out-cubic),opacity var(--dur-slow) var(--ease-out-cubic)}
+}
+.pstage>.screen.in-r{transform:translateX(100%)}
+.pstage>.screen.in-l{transform:translateX(-100%)}
+.pstage>.screen.in-up{transform:translateY(100%)}
+.pstage>.screen.out-l{transform:translateX(-24%);opacity:.55}
+.pstage>.screen.out-r{transform:translateX(24%);opacity:.55}
+.pstage>.screen.out-dn{transform:translateY(100%)}
+/* Hotspots are the real controls in the cloned screen, so nothing has to be re-authored. The
+   outline only appears while the reviewer asks for it. */
+.proto.hints .pstage [data-hot]{outline:2px solid var(--accent-edge);outline-offset:1px;
+  border-radius:var(--radius-sm);cursor:pointer}
+.pstage [data-hot]{cursor:pointer}
+.pbar{display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
+.pbar select,.pbar button{font-family:var(--ui);font-size:var(--t-label);font-weight:600;
+  border:0;border-radius:var(--radius-full);padding:0.5rem 0.875rem;min-height:38px;
+  background:var(--surface-2);color:var(--ink);cursor:pointer}
+.pbar button:hover{background:var(--surface-3)}
+.pbar button.on{background:var(--action);color:var(--on-action)}
+.pbar .pnow{font-family:var(--mono);font-size:var(--t-caption);color:var(--ink-2);margin-left:auto}
+.pwrap{display:flex;gap:1.5rem;align-items:flex-start;flex-wrap:wrap}
+.plist{flex:1;min-width:15rem;max-height:874px;overflow:auto;border-radius:var(--radius-md);
+  background:var(--surface);padding:0.5rem}
+.plist button{display:block;width:100%;text-align:left;border:0;background:none;cursor:pointer;
+  font-family:var(--ui);font-size:var(--t-caption);color:var(--ink-2);padding:0.375rem 0.5rem;
+  border-radius:var(--radius-sm);line-height:1.3}
+.plist button:hover{background:var(--surface-2);color:var(--ink)}
+.plist button.on{background:var(--action);color:var(--on-action);font-weight:700}
+.plist .pgrp{font-size:var(--t-caption);font-weight:800;color:var(--ink-3);letter-spacing:.03em;
+  text-transform:uppercase;padding:0.625rem 0.5rem 0.25rem}
 .phone{width:402px;zoom:var(--ps,.72);margin:0 auto;border-radius:var(--radius-device-outer);background:var(--device-bezel);padding:10px;box-shadow:var(--shadow-2)}
 .phone .screen{border-radius:var(--radius-device);overflow:hidden;background:var(--paper);position:relative;aspect-ratio:402/874}
 .phone img.shot{width:100%;display:block}
@@ -2501,6 +2542,7 @@ pre.code code{background:none;padding:0;font-family:var(--mono);font-size:var(--
       <div class="navgroup"><span>Applied</span>
         <a data-go="screens">Screens</a>
         <a data-go="allscreens">All screens</a>
+<a data-go="proto">Prototype</a>
         <a data-go="constraints">Constraints &amp; evidence</a>
         <a data-go="a11y">Accessibility</a>
         <a data-go="migration">Migration</a>
@@ -6904,6 +6946,26 @@ if (reduceMotion) { initial = { opacity: 0 }; animate = { opacity: 1 }; exit = {
       </details>
     </details>
 <!-- CONSTRAINTS & EVIDENCE -->
+  </section>
+
+  <section class="section proto" id="proto">
+    <div class="eyebrow">Applied</div>
+    <h1 class="title">Prototype</h1>
+    <p class="lede">The screens, walkable. This frame shows a <em>clone</em> of the same nodes documented under All screens &mdash; there is no second copy of the UI to drift, so anything fixed there is fixed here. Click the real controls: the bottom nav, the action bar, a back chevron, or the primary button. Arrow keys step through a flow, <kbd>Backspace</kbd> goes back.</p>
+    <div class="pbar">
+      <select id="pflow" aria-label="Flow"></select>
+      <button id="pprev" aria-label="Previous screen">&lsaquo; Prev</button>
+      <button id="pnext" aria-label="Next screen">Next &rsaquo;</button>
+      <button id="pback" aria-label="Back">Back</button>
+      <button id="phints" aria-pressed="false">Show hotspots</button>
+      <span class="pnow" id="pnow"></span>
+    </div>
+    <div class="pwrap">
+      <div class="pframe"><div class="pstage" id="pstage"></div></div>
+      <div class="plist" id="plist"></div>
+    </div>
+  </section>
+
   <section class="section" id="constraints">
     <div class="eyebrow">Applied · evidence-first</div>
     <h1 class="title">Constraints &amp; evidence</h1>
@@ -6983,7 +7045,7 @@ if (reduceMotion) { initial = { opacity: 0 }; animate = { opacity: 1 }; exit = {
       <tr><td>Fewer borders; prefer shadow/spacing/background-shift</td><td>Refactoring UI</td><td>Sound, but <b>bounded by SC 1.4.11</b> (see above)</td></tr>
       <tr><td>Semantic tokens referenced by role; auto-swap per theme; components never touch raw colour</td><td>Coinbase CDS; Radix Colors</td><td>Strong — and the direct fix for our 191 hardcoded hexes</td></tr>
       <tr><td>Delight scales inversely with frequency (big moments for rare, high-stakes actions)</td><td>Benji Taylor, <em>Family Values</em></td><td>Practitioner heuristic — persuasive, not empirical</td></tr>
-    </ul>
+    </table>
 
     <h2 class="h">Tier 4 — Convention, <em>not</em> standard <span class="small">(we must stop citing these as authority)</span></h2>
     <div class="callout warn">The verification pass returned <b>zero</b> primary-source claims from Apple HIG, Material 3, or financial-typography literature. So the following, all currently in this system, are <b>convention or preference</b> and must be labelled as such until separately sourced: the <b>4px spacing grid</b>, the <b>4-value radius scale</b>, the <b>tabular-figures</b> rationale, safe-area/tab-bar conventions, and 45–75ch line length. They may still be <em>good</em> — they are simply not standards, and this system previously presented them with the same authority as WCAG.</div>
@@ -7236,6 +7298,154 @@ links.forEach(a=>a.addEventListener('click',()=>{go(a.dataset.go);
       else if(e.key===' '||e.key==='Enter'){e.preventDefault();select(items[i],cls,group);}
     });
   });
+})();
+</script>
+<script>
+/* ---- Prototype player -----------------------------------------------------------------------
+   Reads the screens that already exist under All screens and clones them into one device frame.
+   Nothing about a screen is re-authored here: the hotspots ARE the real controls in the mock, so
+   a button that gets restyled or renamed stays clickable without this file knowing about it.
+   Cloning rather than moving matters -- the originals stay where the review harness expects them,
+   and the clone deliberately drops its caption so the structure check still finds no orphans. */
+(function(){
+  const stage = document.getElementById('pstage');
+  if (!stage) return;
+  const listEl = document.getElementById('plist'), flowEl = document.getElementById('pflow');
+  const nowEl  = document.getElementById('pnow'),  sect   = document.getElementById('proto');
+
+  // Index every screen in document order, carrying the flow heading above it.
+  const screens = [];
+  let flow = '(ungrouped)';
+  document.querySelectorAll('#allscreens h2.h, #allscreens .scrcap').forEach(el => {
+    if (el.tagName === 'H2') { flow = el.textContent.trim(); return; }
+    const phone = el.parentElement.querySelector('.phone');
+    const scr = phone && phone.querySelector('.screen');
+    if (!scr) return;
+    const cap = el.textContent.replace(/^\d+/, '').replace(/\s+/g, ' ').trim();
+    screens.push({ cap, flow, node: scr, i: screens.length });
+  });
+  if (!screens.length) return;
+
+  const byCap = new Map(screens.map(s => [s.cap, s]));
+  // Resolve a target by exact caption, then by prefix -- so 'Receive' finds the base screen and
+  // not 'Receive · address copied', which a plain substring match would hit first.
+  const find = name => byCap.get(name) || screens.find(s => s.cap === name)
+    || screens.find(s => s.cap.replace(/\s+(shipped|gap|bug|proposed|sheet)$/, '') === name)
+    || screens.find(s => s.cap.startsWith(name));
+
+  const HOME = { Home: 'Home / Overview', Explore: 'dApp browser', Activity: 'Activity' };
+  const ACT  = { send: 'Send · recipient', receive: 'Receive', swap: 'Swap', overview: 'Home / Overview' };
+
+  let cur = 0, stack = [];
+
+  const render = (idx, dir) => {
+    const s = screens[idx]; if (!s) return;
+    // lastElementChild, not first: screens are APPENDED, so the one on show is the last one.
+    // Taking the first removed the OLDEST node each time and let everything in between pile up --
+    // six deep after a handful of taps, with every query hitting a stale screen underneath.
+    const old = stage.lastElementChild;
+    const el = s.node.cloneNode(true);
+    el.querySelectorAll('.scrcap,.scrnote').forEach(n => n.remove());
+    const enter = dir === 'back' ? 'in-l' : dir === 'up' ? 'in-up' : 'in-r';
+    if (old) el.classList.add(enter);
+    stage.appendChild(el);
+    wire(el);
+    // Correctness must not depend on requestAnimationFrame. A backgrounded or throttled tab never
+    // fires it, and the first version put the cleanup inside a double-rAF -- so screens stacked up
+    // six deep, every one of them still carrying its enter-transform, and every lookup afterwards
+    // hit a stale screen underneath. rAF now only starts the animation; a timer does the removal.
+    const settle = () => el.classList.remove('in-r', 'in-l', 'in-up');
+    requestAnimationFrame(() => requestAnimationFrame(settle));
+    setTimeout(settle, 60);
+    if (old) {
+      old.classList.add(dir === 'back' ? 'out-r' : dir === 'up' ? '' : 'out-l');
+      setTimeout(() => { old.remove(); }, 440);
+    }
+    // A fast sequence of taps can outrun the transitions: drop anything that is neither the
+    // outgoing nor the incoming screen rather than let it accumulate.
+    [...stage.children].forEach(n => { if (n !== el && n !== old) n.remove(); });
+    cur = idx;
+    nowEl.textContent = (idx + 1) + ' · ' + s.cap;
+    listEl.querySelectorAll('button').forEach(b =>
+      b.classList.toggle('on', +b.dataset.i === idx));
+    const active = listEl.querySelector('button.on');
+    if (active) active.scrollIntoView({ block: 'nearest' });
+    if (flowEl.value !== s.flow) flowEl.value = s.flow;
+  };
+
+  const goto = (target, dir) => {
+    const t = typeof target === 'number' ? screens[target] : find(target);
+    if (!t || t.i === cur) return;
+    if (dir !== 'back') stack.push(cur);
+    render(t.i, dir);
+  };
+  const back = () => { const p = stack.pop(); if (p != null) render(p, 'back'); };
+  const step = d => {
+    const here = screens[cur];
+    // Step within the flow, not the whole page: running off the end of Send should stop, not
+    // silently land you in Contacts.
+    const sib = screens.filter(x => x.flow === here.flow);
+    const at = sib.indexOf(here) + d;
+    if (at < 0 || at >= sib.length) return;
+    stack.push(cur); render(sib[at].i, d > 0 ? 'fwd' : 'back');
+  };
+
+  // Attach hotspots to the controls the mock already has.
+  function wire(root) {
+    const hot = (el, fn) => { if (!el) return; el.dataset.hot = '1';
+      el.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); fn(); }); };
+    root.querySelectorAll('[data-goto]').forEach(el => hot(el, () => goto(el.dataset.goto)));
+    root.querySelectorAll('.mnav .t').forEach(t => {
+      const label = (t.textContent || '').trim();
+      if (HOME[label]) hot(t, () => goto(HOME[label]));
+    });
+    root.querySelectorAll('.mseg .seg').forEach(sg => {
+      const act = sg.dataset.act || 'overview';
+      if (ACT[act]) hot(sg, () => goto(ACT[act]));
+    });
+    root.querySelectorAll('.bk2,.bk,.sh2 .bk2,[aria-label="Back"]').forEach(b => hot(b, back));
+    // A primary action advances the flow -- the common case, and it means a new screen added to a
+    // flow is walkable the moment it exists.
+    root.querySelectorAll('.zone .btn-primary,.msheet .btn-primary,.pcta').forEach(b =>
+      hot(b, () => step(1)));
+  }
+
+  // Flow picker + screen list
+  const flows = [...new Set(screens.map(s => s.flow))];
+  flowEl.innerHTML = flows.map(f => `<option>${f}</option>`).join('');
+  flowEl.addEventListener('change', () => {
+    const first = screens.find(s => s.flow === flowEl.value);
+    if (first) { stack.push(cur); render(first.i, 'fwd'); }
+  });
+  let html = '', seen = null;
+  screens.forEach(s => {
+    if (s.flow !== seen) { html += `<div class="pgrp">${s.flow}</div>`; seen = s.flow; }
+    html += `<button data-i="${s.i}">${s.i + 1} · ${s.cap}</button>`;
+  });
+  listEl.innerHTML = html;
+  listEl.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    stack.push(cur); render(+b.dataset.i, 'fwd');
+  });
+
+  document.getElementById('pnext').onclick = () => step(1);
+  document.getElementById('pprev').onclick = () => step(-1);
+  document.getElementById('pback').onclick = back;
+  const hintBtn = document.getElementById('phints');
+  hintBtn.onclick = () => {
+    const on = sect.classList.toggle('hints');
+    hintBtn.classList.toggle('on', on);
+    hintBtn.setAttribute('aria-pressed', String(on));
+  };
+  addEventListener('keydown', e => {
+    if (!sect.classList.contains('active')) return;
+    if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') return;
+    if (e.key === 'ArrowRight') { e.preventDefault(); step(1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); step(-1); }
+    else if (e.key === 'Backspace') { e.preventDefault(); back(); }
+  });
+
+  render(find('Home / Overview')?.i ?? 0, 'fwd');
 })();
 </script>
 </body>

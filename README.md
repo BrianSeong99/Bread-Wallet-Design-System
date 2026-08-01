@@ -8,8 +8,9 @@ It is a single self-contained page. Open `index.html` — or serve it, which is 
 fonts and icons to load:
 
 ```bash
-python3 -m http.server 4599
-# then open http://localhost:4599
+npm start          # http://localhost:4599
+npm run review     # the automated design review
+npm run screens    # regenerate docs/SCREENS.md
 ```
 
 **167 screens** across 16 flows, drawn at true iPhone 17 dimensions (402×874pt), in light and
@@ -36,9 +37,12 @@ fails on:
 | structure | group counts match their contents; no orphan screens |
 
 ```bash
-node review.mjs                  # both themes, every screen
-node review.mjs --shot 04        # also write PNGs for screens matching a caption
+npm run review                       # both themes, every screen
+npm run review:shot "Send / review"  # also write PNGs for screens matching a caption
 ```
+
+It runs in CI on every push and pull request, so the rules below are enforced rather than
+remembered.
 
 The checks exist because each one caught something real. The 44pt rule measures both dimensions
 because an icon-only chip passed at 44 tall and 43 wide. The unpaintable-SVG lint exists because
@@ -67,14 +71,33 @@ mask has any coverage.
 ## Layout
 
 ```
-index.html        the system — tokens, foundations, components, every screen
-review.mjs        the automated review described above
-screens.mjs       regenerates the screen index
-SPEC.md           principles and the rules, with the reasoning
-COMPONENTS.md     component consolidation map
-TOAST.md          comparative research
-assets/           icons, fonts, reference captures
+site/            the design system itself - one page: tokens, foundations, components, screens
+  index.html
+  assets/        icons, fonts, reference captures
+docs/
+  SPEC.md        principles and the rules, with the reasoning behind each
+  COMPONENTS.md  component consolidation map
+  SCREENS.md     generated index - screen to source file, and back
+  TOAST.md       comparative research against Toast's system, measured not eyeballed
+tools/
+  review.mjs     the automated design review
+  screens.mjs    regenerates docs/SCREENS.md
+.github/workflows/
+  review.yml     runs the review on every push and PR
+  pages.yml      publishes site/ to GitHub Pages
 ```
+
+One page, not a component library. Crust specifies a wallet that ships as Capacitor, a browser
+extension and Tauri; there is no shared runtime to publish to, so shipping React packages would
+mean maintaining a second implementation that drifts from the first. The page *is* the
+specification, and `tools/review.mjs` is what keeps it honest.
+
+## Prototype
+
+The system has a **Prototype** section: one device frame that walks the screens like a clickable
+mock-up. It clones the same nodes documented under All screens, so there is no second copy of the
+UI to drift, and the hotspots are the mock's own controls - the bottom nav, the action bar, a back
+chevron, the primary button. Arrow keys step through a flow, Backspace goes back.
 
 ## Credits
 

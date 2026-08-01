@@ -1,0 +1,15 @@
+{
+  "name": "bread-wallet-design-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Crust — the design system for Bread, a Miden wallet",
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 4599 --directory site",
+    "review": "node tools/review.mjs",
+    "review:shot": "node tools/review.mjs --shot",
+    "screens": "node tools/screens.mjs"
+  },
+  "devDependencies": { "playwright": "^1.49.0" },
+  "engines": { "node": ">=20" }
+}

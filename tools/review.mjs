@@ -33,7 +33,7 @@
 // which makes both the theme flip and the section reveal resolve instantly.
 
 import { chromium } from 'playwright';
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 // Icon PRESENCE lint. The .svgic mask paints the icon's own alpha, so an SVG with
@@ -42,6 +42,14 @@ import { join } from 'node:path';
 // perfectly good ratio whether or not the mask has any coverage. key.svg and search.svg
 // were both shipped invisible this way. The app gets away with these files because its
 // <Icon> component injects fill/stroke as a prop; a CSS mask uses the raw file.
+// This file lives beside the site in the wallet worktree (design-system/index.html) and one level
+// up from it in the standalone repo (tools/ + site/). Resolve either, so the same harness copies
+// between the two without edits and the two cannot drift.
+const sitePath = rel => {
+  const here = join(import.meta.dirname, rel);
+  return existsSync(here) ? here : join(import.meta.dirname, '../site', rel);
+};
+
 const lintIcons = dir => {
   const bad = [];
   for (const f of readdirSync(dir).filter(n => n.endsWith('.svg'))) {
@@ -73,7 +81,9 @@ const lintSpacing = file => {
   return [...seen].sort((a, b) => b[1] - a[1]);
 };
 
-const URL = process.env.DS_URL ?? 'http://localhost:4599';
+// Not : that shadows the global constructor, and any path resolved with 
+// later in this file dies with "URL is not a constructor".
+const SITE_URL = process.env.DS_URL ?? 'http://localhost:4599';
 const SHOT = process.argv.includes('--shot') ? process.argv[process.argv.indexOf('--shot') + 1] : null;
 const SAFE_BOTTOM = 34; // iPhone 17 home-indicator reserve, in points
 const SAFE_TOP = 62;
@@ -414,7 +424,7 @@ const run = async () => {
   await ctx.route('**/*', r => r.continue({ headers: { ...r.request().headers(), 'cache-control': 'no-cache' } }));
   const errors = [];
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
-  await page.goto(`${URL}?cb=${Date.now()}`, { waitUntil: 'networkidle' });
+  await page.goto(`${SITE_URL}?cb=${Date.now()}`, { waitUntil: 'networkidle' });
 
   const results = {};
   await page.evaluate(prep);
@@ -504,6 +514,14 @@ const run = async () => {
     }
     for (const c of document.querySelectorAll('.scrcap'))
       if (!c.closest('details.grp')) out.orphan.push(txt(c).slice(0, 44));
+    // A .section nested inside another one is invisible in normal use -- its parent is
+    // display:none whenever a different section is picked -- but INVISIBLE TO THIS HARNESS TOO,
+    // because prep() marks every section active and an active parent renders an active child.
+    // Exactly how #allscreens swallowed constraints, a11y and migration: three sections of the
+    // system were unreachable from the nav and every check still passed. Assert the shape.
+    for (const sec of document.querySelectorAll('.section'))
+      if (!sec.parentElement.classList.contains('main'))
+        out.orphan.push(`section #${sec.id} nested inside #${sec.parentElement.id || sec.parentElement.tagName}`);
     return out;
   });
   const structural = structure.stale.length + structure.empty.length + structure.orphan.length;
@@ -514,14 +532,14 @@ const run = async () => {
     structure.orphan.forEach(t => console.log(`      orphan      : ${t} — outside every sub-group`));
   }
 
-  const offScale = lintSpacing('design-system/index.html');
+  const offScale = lintSpacing(sitePath('index.html'));
   const offScaleTotal = offScale.reduce((n, [, c]) => n + c, 0);
   if (offScale.length) {
     console.log(`\n  ! OFF-SCALE SPACING — ${offScaleTotal} uses across ${offScale.length} values not on the --sp-* scale:`);
     console.log(`      ${offScale.slice(0, 10).map(([px, n]) => `${px}px×${n}`).join('  ')}${offScale.length > 10 ? '  …' : ''}`);
   }
 
-  const unpaintable = lintIcons('design-system/assets/icons');
+  const unpaintable = lintIcons(sitePath('assets/icons'));
   if (unpaintable.length) {
     console.log(`\n  \u2717 UNPAINTABLE ICONS (fill="none", no stroke -> invisible under a mask):`);
     unpaintable.forEach(f => console.log(`      ${f}`));

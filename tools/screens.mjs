@@ -10,10 +10,15 @@
 // in both directions: which screen specifies a given source file, and which source a given
 // screen was drawn against.
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 
-const SRC = new URL('./index.html', import.meta.url);
-const OUT = new URL('./SCREENS.md', import.meta.url);
+// Works in both layouts: beside the site in the wallet worktree, one level up from it in the
+// standalone repo (tools/ + site/ + docs/). Same reason review.mjs does this -- one copy of the
+// tool, so the two cannot drift.
+const rel = p => new URL(p, import.meta.url);
+const FLAT = existsSync(rel('./index.html'));
+const SRC = FLAT ? rel('./index.html') : rel('../site/index.html');
+const OUT = FLAT ? rel('./SCREENS.md') : rel('../docs/SCREENS.md');
 const html = readFileSync(SRC, 'utf8');
 
 const strip = s => s.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
