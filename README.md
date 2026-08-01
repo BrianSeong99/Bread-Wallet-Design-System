@@ -80,11 +80,14 @@ docs/
   SCREENS.md     generated index - screen to source file, and back
   TOAST.md       comparative research against Toast's system, measured not eyeballed
 tools/
-  review.mjs     the automated design review
-  screens.mjs    regenerates docs/SCREENS.md
+  review.mjs           the automated design review
+  review-baseline.json inherited counts it tolerates - may only go down
+  screens.mjs          regenerates docs/SCREENS.md
+AGENTS.md              how to work in this repo, and the traps that have cost time
+.claude/skills/        crust-screens, crust-review
 .github/workflows/
-  review.yml     runs the review on every push and PR
-  pages.yml      publishes site/ to GitHub Pages
+  review.yml           runs the review on every push and PR
+  pages.yml            publishes site/ to GitHub Pages
 ```
 
 One page, not a component library. Crust specifies a wallet that ships as Capacitor, a browser
@@ -98,6 +101,12 @@ The system has a **Prototype** section: one device frame that walks the screens 
 mock-up. It clones the same nodes documented under All screens, so there is no second copy of the
 UI to drift, and the hotspots are the mock's own controls - the bottom nav, the action bar, a back
 chevron, the primary button. Arrow keys step through a flow, Backspace goes back.
+
+## Working in here
+
+[`AGENTS.md`](AGENTS.md) is the short version: run the review, never relax a check, never raise a
+baseline, measure instead of looking. [`CONTRIBUTING.md`](CONTRIBUTING.md) has the longer form, and
+[`CHANGELOG.md`](CHANGELOG.md) records what moved and what forced it.
 
 ## Credits
 

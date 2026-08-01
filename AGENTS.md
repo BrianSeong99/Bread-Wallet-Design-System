@@ -1,0 +1,72 @@
+# Agent guide
+
+Crust is a **design language**, not a component library. There is no build step, no package to
+publish, and no framework. The deliverable is one page — `site/index.html` — that specifies a
+wallet, plus a harness that proves the page obeys its own rules.
+
+Runtime: Node (see `.nvmrc`). No dependencies beyond Playwright.
+
+## Before you finish
+
+**A change is not done until `npm run review` exits 0.** Run it. Read the summary. If a number
+moved, explain why in the commit.
+
+```bash
+npm start          # serve site/ on :4599 — the harness needs this running
+npm run review     # 15 checks, both themes, every screen
+npm run screens    # regenerate docs/SCREENS.md after adding or moving a screen
+```
+
+## Rules that are not negotiable
+
+1. **Never relax a check to make a build pass.** Every check exists because it caught a real
+   defect. If one fires, the design is wrong, not the harness.
+2. **Never raise a number in `tools/review-baseline.json`.** It records inherited debt and may
+   only go down. Lower it in the same commit that improves it.
+3. **No raw hex in a component, no raw `rem` in a spacing property.** Colour comes from the
+   theme tokens, spacing from `--sp-0-5` … `--sp-8`.
+4. **A button label never wraps.** If it takes two lines, shorten the words.
+5. **A container's size does not depend on its contents.** When the content varies, the type
+   fits the box — not the other way round.
+
+## Verify by measuring, not by looking
+
+The harness catches contrast, targets, overflow and reflow. It cannot catch "this moved." For any
+structural change, capture geometry before and after and diff it. That is how the spacing
+migration was proved to move nothing — 5767 boxes, max delta 0.02px — and it is the difference
+between claiming a change is safe and knowing it.
+
+Screenshots are for *showing*, never for verifying. A screenshot at 0.72 zoom will happily hide a
+2px error, and a scaled screenshot has fooled this repo before.
+
+## Traps that have already cost time here
+
+- **`prep()` marks every section active for the audit.** An active parent renders an active child,
+  so a section nested inside another was invisible to the very tool meant to find it. Three
+  sections were unreachable from the nav for weeks. The structure check now asserts section
+  parentage — do not weaken it.
+- **`getComputedStyle` returns the *interpolated* value mid-transition.** The audit disables all
+  animation for this reason. Measuring 120ms after a theme flip once read 15.7:1 as 2.54:1 and
+  cost three investigations.
+- **An element at `opacity: 0` still has a computed colour**, and the contrast sweep will score it
+  1.0:1. Paint optional marks on a `::before`, not on a hidden span.
+- **A CSS mask paints the SVG's own alpha.** `fill="none"` with no stroke paints nothing — an
+  invisible icon that no contrast check can see, because the element's colour is fine either way.
+- **`zoom` scales measurements.** Divide by it, or your pixel numbers are fiction.
+
+## Where things are
+
+```
+site/index.html   tokens → foundations → components → screens → prototype player
+site/assets/      icons (SVG, painted via CSS mask), fonts, reference captures
+docs/SPEC.md      the rules, with the reasoning and the measurements behind each
+docs/SCREENS.md   generated — do not hand-edit
+tools/review.mjs  the harness; read the header comment before changing it
+```
+
+## Commits
+
+Say *why*, with the number that forced it. "Fix spacing" is worth less than "the fill measured
+1.10:1 against the sheet, so the state moved to a mark that clears 3:1."
+
+Never add AI attribution to a commit, a PR, or an issue.
