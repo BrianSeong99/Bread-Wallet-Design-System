@@ -1,0 +1,14 @@
+{
+  "name": "@bread/crust-tokens",
+  "version": "0.1.0",
+  "description": "Crust design tokens — CSS custom properties, JSON, and a Tailwind preset. Generated from apps/site/tokens.css; never hand-edit.",
+  "license": "MIT",
+  "type": "commonjs",
+  "main": "./tokens.json",
+  "exports": {
+    ".": "./tokens.json",
+    "./tokens.css": "./tokens.css",
+    "./tailwind-preset": "./tailwind.preset.cjs"
+  },
+  "files": ["tokens.css", "tokens.json", "tailwind.preset.cjs"]
+}

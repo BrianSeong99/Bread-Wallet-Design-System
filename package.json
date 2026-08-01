@@ -5,11 +5,21 @@
   "description": "Crust — the design system for Bread, a Miden wallet",
   "type": "module",
   "scripts": {
-    "start": "python3 -m http.server 4599 --directory site",
+    "start": "python3 -m http.server 4599 --directory apps/site",
     "review": "node tools/review.mjs",
     "review:shot": "node tools/review.mjs --shot",
-    "screens": "node tools/screens.mjs"
+    "screens": "node tools/screens.mjs",
+    "build": "node tools/build-packages.mjs && npm run build -w @bread/crust-react",
+    "build:check": "node tools/build-packages.mjs --check",
+    "test": "npm run build:check && npm run test -w @bread/crust-react"
   },
-  "devDependencies": { "playwright": "^1.49.0" },
-  "engines": { "node": ">=20" }
+  "devDependencies": {
+    "playwright": "^1.62.1"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

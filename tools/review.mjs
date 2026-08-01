@@ -46,8 +46,11 @@ import { join } from 'node:path';
 // up from it in the standalone repo (tools/ + site/). Resolve either, so the same harness copies
 // between the two without edits and the two cannot drift.
 const sitePath = rel => {
-  const here = join(import.meta.dirname, rel);
-  return existsSync(here) ? here : join(import.meta.dirname, '../site', rel);
+  for (const base of ['.', '../site', '../apps/site']) {
+    const p = join(import.meta.dirname, base, rel);
+    if (existsSync(p)) return p;
+  }
+  throw new Error(`cannot locate ${rel} relative to ${import.meta.dirname}`);
 };
 
 const lintIcons = dir => {
@@ -68,8 +71,14 @@ const lintIcons = dir => {
 // padding cancelling a 9px negative margin), and snapping it would churn tuned geometry for no
 // visible gain. The number's job is to stay visible so it shrinks rather than quietly grows.
 const SPACE_PROPS = /(?:padding|margin|gap|row-gap|column-gap|inset)(?:-(?:top|right|bottom|left|inline|block))?/;
-const lintSpacing = file => {
-  const css = readFileSync(file, 'utf8').split('<style>')[1]?.split('</style>')[0] ?? '';
+const lintSpacing = files => {
+  // Spacing declarations live in the page's inline style AND in the extracted components.css --
+  // a rule that moves between those files must not escape the count, or "improvements" appear
+  // that are really just relocations.
+  const css = files.map(f => {
+    const raw = readFileSync(f, 'utf8');
+    return raw.includes('<style>') ? raw.split('<style>')[1].split('</style>')[0] : raw;
+  }).join('\n');
   const seen = new Map();
   const re = new RegExp(`(${SPACE_PROPS.source})\\s*:\\s*([^;}]+)`, 'g');
   for (const m of css.matchAll(re)) {
@@ -532,7 +541,7 @@ const run = async () => {
     structure.orphan.forEach(t => console.log(`      orphan      : ${t} — outside every sub-group`));
   }
 
-  const offScale = lintSpacing(sitePath('index.html'));
+  const offScale = lintSpacing([sitePath('index.html'), sitePath('components.css')]);
   const offScaleTotal = offScale.reduce((n, [, c]) => n + c, 0);
   if (offScale.length) {
     console.log(`\n  ! OFF-SCALE SPACING — ${offScaleTotal} uses across ${offScale.length} values not on the --sp-* scale:`);

@@ -1,0 +1,47 @@
+/* ============================================================================================
+   Crust components - canonical, context-free component rules. Rendered by the site's specimens
+   and shipped verbatim inside @bread/crust-react, so the specimen a designer approves and the
+   button an engineer imports are the same bytes. Contextual layout (.zone .btn width, sheet
+   overrides) stays in the surface that owns the context.
+   Every var() here must resolve in tokens.css - enforced by the react package's binding test.
+   ============================================================================================ */
+
+.btn{font-family:var(--ui);font-weight:700;font-size:var(--t-body);border:0;cursor:pointer;transition:all var(--dur-fast) ease}
+
+/* ---- The primary action is neutral, not brand ----------------------------------------------
+   Toast's own product is the argument: their logo is orange and nothing else is, every button
+   being near-black. Orange as a FILL under white text measures exactly 3.00:1 -- passing only as
+   large text, with zero margin -- which is why this system grew a minimum CTA label size, an
+   --on-accent-sm for small labels, an --accent-ink for orange text, an --accent-edge for rings
+   and an --accent-critical for confirms. Five tokens working around one colour doing a job it
+   cannot do. White on #2B2E35 is 13.6:1 and needs none of them.
+   Dark inverts rather than darkening: a near-black button on a near-black page is not a button.
+   The rule that survives both themes is "the primary action is the highest-contrast filled
+   element on the page" -- near-black on warm white, near-white on near-black. */
+.btn-primary{background:var(--action);color:var(--on-action);border-radius:var(--radius-full);padding:var(--sp-3-5) 1.625rem;font-size:var(--text-cta);font-weight:700}
+
+.btn-primary:hover{background:var(--action-hover)}
+
+.btn-primary:disabled{background:var(--surface-3);color:var(--ink-3);cursor:not-allowed}
+
+.btn-secondary{background:var(--surface-2);color:var(--ink);border-radius:var(--radius-full);padding:0.9375rem 1.625rem}
+
+.btn-secondary:hover{background:var(--surface-3)}
+
+.btn-ghost{background:transparent;color:var(--accent-ink);padding:var(--sp-3-5) 1.125rem;border-radius:var(--radius-md)}
+
+.btn-ghost:hover{background:var(--accent-wash)}
+
+/* Destructive fill. Exists because the accent means "recommended", and a control that erases the
+   wallet must not wear the same clothes as Continue. Filled, not outlined, per the no-bordered-
+   controls rule -- the weight comes from the hue, not from a border. --on-neg flips with the
+   theme: white is 6.84:1 on the light --neg and would fail on the dark one, which is a light
+   coral, so dark uses near-black at 6.23:1. */
+.btn-danger{background:var(--neg);color:var(--on-neg);border-radius:var(--radius-full);padding:var(--sp-3-5) 1.625rem;font-size:var(--text-cta);font-weight:700}
+
+.iconbtn{width:2.75rem;height:2.75rem;border-radius:var(--radius-full);background:var(--surface-2);display:inline-flex;align-items:center;justify-content:center;border:0;cursor:pointer;color:var(--ink)}
+
+/* Irreversible actions (send / sign confirm). Placed AFTER .btn-primary on purpose: the two have
+   equal specificity and the markup is class="btn btn-primary critical", so source order is what
+   lets the critical fill win. Reorder these and the confirm button silently goes neutral. */
+.critical{background:var(--accent-critical)}

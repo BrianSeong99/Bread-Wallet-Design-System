@@ -1,0 +1,216 @@
+/* ============================================================================================
+   Crust design tokens - THE source of truth for colour, type roles, spacing, radius and motion.
+   This exact file is rendered by the design-system site AND shipped to engineers as
+   @bread/crust-tokens. Edit it here; the projections (tokens.json, the Tailwind preset) are
+   generated from it and CI fails if they drift. Never define a token anywhere else.
+   ============================================================================================ */
+
+:root{
+  /* Spacing is theme-INDEPENDENT and must be declared here, not in a theme block.
+     It lived in [data-theme="light"] only, so in dark every var(--stack) was
+     invalid and gap silently fell back to `normal` (0). Invisible in the HTML,
+     invisible in light, and the harness measures contrast and targets, not gaps. */
+  /* ---- Spacing scale ------------------------------------------------------------------------
+     Named because it was not. The system had 35 distinct rem values across 592 spacing
+     declarations -- every pixel from 1 to 16 -- against 11 uses of a --stack token. That is a 1px
+     grid, which is another way of saying no grid: each value was chosen by nudging, and nothing
+     stopped the next one being 11px.
+     The steps are Tailwind's shape (4px base with 2px half-steps), chosen because ~65% of existing
+     uses already land on it exactly. Those are migrated here with ZERO movement -- same computed
+     value, verified by diffing every box in the page before and after.
+     The rest are left alone on purpose. Snapping 149 odd-pixel values would churn geometry that is
+     deliberately paired -- .mlist's 9px inline padding exists to cancel a 9px negative margin, the
+     selection pip's offset is half a line-height -- for no gain a user could see. The harness
+     reports what is still off-scale so it stays visible instead of silently growing. */
+  --sp-0-5:0.125rem;--sp-1:0.25rem;--sp-1-5:0.375rem;--sp-2:0.5rem;--sp-2-5:0.625rem;--sp-3:0.75rem;--sp-3-5:0.875rem;--sp-4:1.0rem;--sp-5:1.25rem;--sp-6:1.5rem;--sp-8:2.0rem;
+  --stack-tight:0.5rem; --stack:0.75rem; --stack-loose:1rem;
+
+  /* type roles */
+  --display:'Nunito',system-ui,sans-serif;      /* warmth:onboarding, headings */
+  --ui:'Inter',system-ui,sans-serif;            /* clarity:body, controls */
+  --mono:'Geist Mono',ui-monospace,SFMono-Regular,monospace; /* addresses, hashes, ids ONLY */
+  /* DECIDED (option A): numbers use the brand display face, so the balance joins the
+     onboarding family rather than reading as a code readout. Cash App does the same —
+     brand face for balance moments, system face for UI. Tabular FIGURES still apply;
+     a monospace FONT does not. */
+  --num:var(--display);
+  /* PRIMITIVES — the scale is only real if everything references it */
+  --radius-sm:0.5rem; --radius-md:0.75rem; --radius-lg:1rem; --radius-full:999px;
+  --radius-device:2.25rem; --radius-device-outer:2.75rem;   /* illustrative phone frames only */
+  /* MOTION — these are the APP'S tokens, read from src/lib/animation/*.
+     I had invented fast 150 / base 200 / spatial 320 + ease-spatial
+     cubic-bezier(.22,1,.36,1); none of those exist in the codebase. The real
+     durations are .18/.28/.42/.6 and the real curves are the four below.
+     Springs are the app's PRIMARY mechanism for anything that travels — CSS
+     can't spring, so the curves here are the tween fallback. */
+  --dur-fast:.18s;            /* durations.fast */
+  --dur-normal:.28s;          /* durations.normal */
+  --dur-slow:.42s;            /* durations.slow */
+  --dur-xslow:.6s;            /* durations.extraSlow */
+  --dur-base:var(--dur-normal);   /* alias */
+  --dur-spatial:var(--dur-slow);  /* alias */
+  --dur-loop-spin:.7s; --dur-loop-shimmer:1.4s;
+  --ease-in-cubic:cubic-bezier(.32,0,.67,0);   /* easings.easeInCubic */
+  --ease-out-cubic:cubic-bezier(.16,1,.3,1);   /* easings.easeOutCubic — iOS soft-out */
+  --ease-in-out:cubic-bezier(.65,0,.35,1);     /* easings.easeInOut */
+  --ease-out-back:cubic-bezier(.34,1.56,.64,1);/* easings.easeOutBack */
+  --ease-standard:var(--ease-in-out);
+  --ease-spatial:var(--ease-out-cubic);
+  /* SIZING IS RELATIVE, NEVER HARD PX — the app must honour the user's text-size
+     setting (iOS Dynamic Type / Android font scale / browser zoom). rem = root-relative.
+     WCAG's "large text" floor of 18.66px bold == 1.1663rem at a 16px root; the CTA sits
+     above it at 1.1875rem and grows with the user's preference, so it can never fall
+     below the threshold. */
+  /* SCREEN TYPE SCALE — headings may only use these. Six drifting values (72/23/21/20/19/16)
+     collapsed to four deliberate steps at ~1.3x. --t-display is intentionally off-scale:it is
+     the Welcome brand moment only, never a step screen. */
+  /* Body ramp. The scale previously declared only display/title/heading/subhead, so
+     every body size was invented at the call site: Home alone used 11, 11.5, 12, 12.5,
+     13, 13.5, 14.5, 15 and 17. Three tokens cover all of it. 11.5 is the floor-adjacent
+     caption (Apple's minimum is 11; the harness enforces it). */
+  /* The ramp:11 / 13 / 15 / 16 / 19 / 20 / 26 / 32 / 72. Nine steps for a whole product.
+     --t-cta exists because white-on-orange is 3.00:1 and conforms only as LARGE text
+     (>=1.16625rem bold) -- the CTA label size is an accessibility constraint, not styling.
+     --t-caption is 11 (the Apple floor and the majority use), retiring a near-identical
+     11.5 step; two sizes that close together were themselves the drift. */
+  --t-body:0.9375rem; --t-label:0.8125rem; --t-caption:0.6875rem; --t-cta:1.1875rem; --t-balance:2rem;
+  --t-display:4.5rem;   /* hero — Welcome only */
+  /* Fit-to-box sub-ramp. NOT four new ramp steps: nothing may be authored at these sizes. They
+     exist only for the mechanism that fits a variable value into a fixed box -- the amount field
+     and the address field. The nine-step ramp governs type a designer CHOOSES; a value nobody
+     chooses the size of has a different requirement, and 32->72 with nothing between made the
+     amount drop two thirds of its size on the first digit typed. Ratio holds the ramp's own ~1.3x
+     (72/56 = 1.29, 56/44 = 1.27, 44/32 = 1.38). */
+  --fit-1:4.5rem; --fit-2:3.5rem; --fit-3:2.75rem; --fit-4:2rem;
+  --t-title:1.625rem;     /* step headline — every onboarding step */
+  --t-heading:1.25rem;   /* screen / section header */
+  --t-subhead:1rem;   /* compact header (back-bar) */
+  --hero-w:8.75rem;     /* step illustration width */
+  --text-cta:1.1875rem;      /* 19px @16 — primary CTA label, accessibility-critical */
+  --text-body:0.9375rem;     /* 15px */
+  --text-label:0.8125rem;    /* 13px */
+  --text-caption:0.75rem;    /* 12px */
+  --pure-white:#FFFFFF; --device-bezel:#000;
+  --focus-ring:0 0 0 0.1875rem var(--accent-wash),0 0 0 0.09375rem var(--accent);
+  --num-feat:'tnum' 1,'lnum' 1;                 /* tabular + lining figures */
+}
+
+/* -------- LIGHT (warm paper, graphite ink, one orange) -------- */
+[data-theme="light"]{
+  --action:#2B2E35;--on-action:#FFFFFF;--action-hover:#3D414A;--accent-edge:#DB6F34;   /* brand orange at 3.20:1 vs paper — rings and edges */
+  --paper:#FFFFFF; --surface:#F7F4F0; --surface-2:#EFEAE4; --surface-3:#E4DED6;
+  --ink:#3F3F3F; --ink-2:#5F5F5F; --ink-3:#6A6A6A;
+  --rule:rgba(63,63,63,.08); --rule-strong:rgba(63,63,63,.16);
+  /* THE BRAND ORANGE STAYS, and so does the WHITE label. Role separation is by JOB:--accent      = the Bread logo orange #E77537, used as a FILL (buttons, active chips).
+     --on-accent   = white. White on brand orange is exactly 3.00:1, which conforms under
+                     SC 1.4.3 ONLY as *large text* (>=18pt / >=14pt bold = 1.16625rem bold).
+                     => The primary CTA therefore has a MINIMUM LABEL SIZE. See .btn-primary.
+                     Margin is ZERO at 3.00:1 — never shrink a white-on-orange label, and
+                     never use --on-accent for small text.
+     --on-accent-sm= near-black, for SMALL labels on an accent fill (5.78:1, any size).
+                     Used by the guardian "Default" band and the active stepper dot.
+     --accent-ink  = darker orange for orange TEXT on light grounds (links, small marks),
+                     because the brand orange as text is only 2.90:1.
+     --accent-critical = optional deeper fill (3.58:1 w/ white) for irreversible actions,
+                     where the research says the stricter option should win. */
+  --accent:#E77537; --accent-hover:#D3651F; --accent-ink:#A84A1A; --accent-wash:#FFF3EC;
+  --accent-critical:#D9661F;
+  --on-accent:#FFFFFF;        /* CTA labels — 3.00:1, valid as large text (>=18.66px bold) */
+  --on-neg:#FFFFFF;           /* label on a --neg fill — 6.84:1 in light */
+  --on-accent-sm:#1C1A18;     /* small labels on accent — 5.78:1, valid at any size */
+  --pos:#4A6B44; --pos-wash:#EAF1E8; --pend:#A8421F; --neg:#A33421; --warn:#8A5A00;
+  --warn-wash:#F6EEDC; --neg-wash:#F7EAE7;
+  /* tx hues:soft pastel SQUARE FILLS carry the personality; the dark glyph carries the
+     accessibility (5.2–5.8:1). Never put a white glyph on these. */
+  /* Action identity — each action-bar glyph ships its OWN brand hue in its SVG
+     (send #91ACC1, receive #99AC94, swap #BEACD2 stroke, earn #777487). Converting all
+     65 icons to currentColor masks for dark-mode adaptivity flattened those four to a
+     single ink, losing the identity. Fix keeps the mask (so the hue is theme-aware) but
+     tints it per action. Light values are darkened from the shipped pastels because the
+     originals measure 2.4-2.5:1 on the chip and a COLLAPSED segment is icon-only, with
+     no label to fall back on, so SC 1.4.11's 3:1 genuinely applies. Dark keeps the
+     pastels as shipped. Hue is preserved in both; only lightness moves. */
+  --act-send:#748A9A; --act-receive:#7C8B78; --act-swap:#8F829F; --act-earn:#777487;
+  /* Deep variants, for when the colour is a FILL under white content rather than a glyph on a
+     light surface. White on the base --act-send is 3.59:1 — fine for the icon (SC 1.4.11 wants
+     3:1) and a fail for the label beside it (4.5:1). One chip cannot have a white icon and a
+     near-black label, so the fill darkens instead: 4.69:1 and 4.56:1. Same values in both themes
+     — the dark-theme --act-* are lighter still, and white on those is worse. */
+  --act-send-deep:#5F7787; --act-receive-deep:#6B7A66;
+  --tx-received:#A8BBA3; --tx-sent:#A3BCCF; --tx-swap:#C9BAD9; --tx-earn:#BDB9CC; --tx-faucet:#CDB0DE;
+  --tx-glyph:#3F3F3F;
+  /* 8 / 12 / 16. --stack-loose was 24 and read as a shout above the Assets header --
+     the 20px/800 heading against 15px body already marks the section, so the gap only
+     needs to separate. A tight ramp is right on a screen where the card and carousel
+     already take ~45% before the list starts. */
+  --nav-pill:rgba(63,63,63,.10); --nav-bg:rgba(255,255,255,.62); --nav-ink-off:#727272;
+  --pat:rgba(255,255,255,.035);
+  /* Account card colours. These were REFERENCED by the colour picker but never defined,
+     so all five swatches rendered rgba(0,0,0,0) -- five invisible circles. The audit
+     could not see it:they carry no text and were not marked as indicators. */
+  /* Darkened from the shipped values, which cannot carry the card's own muted label.
+     Measured against white at .70 alpha (need 4.5:1): shipped slate 3.14, orange 2.19,
+     blue 3.03, green 2.62, purple 2.95 -- all fail. The SHIPPING APP is worse still,
+     because it uses .55 alpha: 1.86-2.55:1 on every colour. Hue is preserved; only
+     lightness moves, which also sits closer to the muted-prestige direction. */
+  --card-slate:#575562; --card-orange:#854320; --card-blue:#455968;
+  --card-green:#4D5A4A; --card-purple:#5C5268;
+  --card-slate-deep:#635F70; --card-orange-deep:#B95B28; --card-blue-deep:#405565;
+  --card-green-deep:#50634C; --card-purple-deep:#5D5368;
+  --nav-rim:rgba(255,255,255,.85); --nav-rim-lo:rgba(63,63,63,.06);
+  --balance:#4F4F4F; --balance-deep:#3D3D3D; --balance-fg:#FFFFFF; --balance-fg-muted:rgba(255,255,255,.70);
+  --shadow-1:0 1px 2px rgba(63,63,63,.06),0 1px 3px rgba(63,63,63,.05);
+  --shadow-2:0 6px 16px rgba(63,63,63,.10),0 2px 6px rgba(63,63,63,.06);
+  --code-bg:#F3F1EE;
+}
+
+/* -------- DARK (graphite ground, same single orange) -------- */
+[data-theme="dark"]{
+  --action:#F5F2EF;--on-action:#1C1A18;--action-hover:#FFFFFF;--accent-edge:var(--accent);   /* on a dark ground the brand orange is already 5.86:1 */
+  --paper:#191919; --surface:#232323; --surface-2:#2B2B2B; --surface-3:#333333;
+  --ink:#FFFFFF; --ink-2:rgba(255,255,255,.65); --ink-3:rgba(255,255,255,.55);
+  --accent-critical:#D9661F;   /* must exist in BOTH themes — see .critical */
+  --rule:rgba(255,255,255,.08); --rule-strong:rgba(255,255,255,.16);
+  /* Dark:the brand orange works as BOTH fill and text here (5.86:1 either way), so
+     --accent-ink collapses back to the brand hue. Same token names, theme-resolved values. */
+  --accent:#E77537; --accent-hover:#F08B57; --accent-ink:#E77537; --accent-wash:#33210F;
+  --on-accent:#FFFFFF;
+  --on-accent-sm:#191919;
+  --pos:#90BA89; --pos-wash:#26301F; --pend:#EE6B38; --neg:#F5736B; --warn:#E8B33F;
+  --on-neg:#1C1A18;           /* dark --neg is a light coral; white on it fails, near-black is 6.23:1 */
+  --warn-wash:#33290F; --neg-wash:#3A1F1C;
+  --act-send:#91ACC1; --act-receive:#99AC94; --act-swap:#BEACD2; --act-earn:#777487;
+  --act-send-deep:#5F7787; --act-receive-deep:#6B7A66;
+  --tx-received:#A8BBA3; --tx-sent:#A3BCCF; --tx-swap:#C9BAD9; --tx-earn:#BDB9CC; --tx-faucet:#CDB0DE;
+  --tx-glyph:#1C1A18;
+  /* Balance card goes near-black in dark mode (colors are light-mode only). */
+  --nav-pill:rgba(255,255,255,.16); --nav-bg:rgba(38,38,38,.58); --nav-ink-off:#989898;
+  --pat:rgba(255,255,255,.05);
+  /* Dark keeps the near-black card, so the hue survives only as a rim -- see data-card. */
+  --card-slate:#737081; --card-orange:#B1592B; --card-blue:#5A7588;
+  --card-green:#657661; --card-purple:#796C89;
+  --card-slate-deep:#5C5A67; --card-orange-deep:#8E4722; --card-blue-deep:#485D6D;
+  --card-green-deep:#505E4E; --card-purple-deep:#61566E;
+  --nav-rim:rgba(255,255,255,.16); --nav-rim-lo:rgba(0,0,0,.35);
+  --balance:#101010; --balance-deep:#000000; --balance-fg:#FFFFFF; --balance-fg-muted:#FFFFFF;
+  --shadow-1:0 1px 2px rgba(0,0,0,.4); --shadow-2:0 8px 24px rgba(0,0,0,.5);
+  --code-bg:#111111;
+}
+
+/* The five wagara, as reusable tokens. var(--pat) inside them resolves in the USING element's
+   context, so one definition serves both themes at their respective alphas. */
+:root{
+  --pat-seigaiha:radial-gradient(circle at 50% 100%,transparent 21%,var(--pat) 22%,var(--pat) 25%,
+    transparent 26%,transparent 40%,var(--pat) 41%,var(--pat) 44%,transparent 45%,
+    transparent 59%,var(--pat) 60%,var(--pat) 63%,transparent 64%);
+  --pat-uroko:radial-gradient(circle at 50% 0,var(--pat) 33%,transparent 34%),
+    radial-gradient(circle at 50% 0,var(--pat) 33%,transparent 34%);
+  --pat-koshi:repeating-linear-gradient(45deg,var(--pat) 0 1.5px,transparent 1.5px 13px),
+    repeating-linear-gradient(-45deg,var(--pat) 0 1.5px,transparent 1.5px 13px);
+  --pat-shippo:radial-gradient(circle at 0% 50%,transparent 45%,var(--pat) 46%,var(--pat) 48%,transparent 49%),
+    radial-gradient(circle at 100% 50%,transparent 45%,var(--pat) 46%,var(--pat) 48%,transparent 49%),
+    radial-gradient(circle at 50% 0%,transparent 45%,var(--pat) 46%,var(--pat) 48%,transparent 49%),
+    radial-gradient(circle at 50% 100%,transparent 45%,var(--pat) 46%,var(--pat) 48%,transparent 49%);
+  --pat-yagasuri:repeating-linear-gradient(63deg,var(--pat) 0 1.5px,transparent 1.5px 9px),
+    repeating-linear-gradient(-63deg,var(--pat) 0 1.5px,transparent 1.5px 9px);
+}

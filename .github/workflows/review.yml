@@ -1,7 +1,11 @@
 name: review
 
-# The design system's rules are only real because this runs. Every check in tools/review.mjs
-# exists because it caught something, so a red build here is the system telling the truth.
+# Four gates, in dependency order:
+#   1. projections — packages/ must be regenerated from apps/site (the designers' surface)
+#   2. binding     — every component class has a rule; every var() resolves to a token
+#   3. types       — the react package compiles strict
+#   4. design      — the 15-check review of every screen, both themes
+# A red build here is the system telling the truth; never fix it by relaxing a check.
 on:
   push: { branches: [main] }
   pull_request:
@@ -13,12 +17,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - run: npm install --no-save playwright@^1.49.0
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Projections in sync with apps/site
+        run: node tools/build-packages.mjs --check
+      - name: Component binding
+        run: npm run test -w @bread/crust-react
+      - name: Types
+        run: npm run build -w @bread/crust-react
       - run: npx playwright install --with-deps chromium
       - name: Serve the site
         run: |
-          python3 -m http.server 4599 --directory site &
+          python3 -m http.server 4599 --directory apps/site &
           for i in $(seq 1 30); do curl -sf http://localhost:4599 >/dev/null && break; sleep 1; done
       - name: Automated design review
         run: node tools/review.mjs

@@ -71,36 +71,50 @@ mask has any coverage.
 ## Layout
 
 ```
-site/            the design system itself - one page: tokens, foundations, components, screens
-  index.html
-  assets/        icons, fonts, reference captures
-docs/
-  SPEC.md        principles and the rules, with the reasoning behind each
-  COMPONENTS.md  component consolidation map
-  SCREENS.md     generated index - screen to source file, and back
-  TOAST.md       comparative research against Toast's system, measured not eyeballed
+apps/site/               the design language - the page designers iterate on
+  index.html             foundations, components, every screen, the prototype player
+  tokens.css             THE token source of truth (the page links it; packages are built from it)
+  components.css         canonical component CSS (same story)
+packages/
+  tokens/                @bread/crust-tokens - tokens.css + tokens.json + Tailwind preset
+  react/                 @bread/crust-react  - typed components; styles.css is the same bytes
+                         the specimens render from
+docs/                    SPEC, COMPONENTS, SCREENS, TOAST
 tools/
-  review.mjs           the automated design review
-  review-baseline.json inherited counts it tolerates - may only go down
-  screens.mjs          regenerates docs/SCREENS.md
-AGENTS.md              how to work in this repo, and the traps that have cost time
-.claude/skills/        crust-screens, crust-review
-.github/workflows/
-  review.yml           runs the review on every push and PR
-  pages.yml            publishes site/ to GitHub Pages
+  review.mjs             the automated design review
+  build-packages.mjs     projects apps/site into packages/ ; --check gates CI on drift
+  review-baseline.json   inherited counts - may only go down
+.github/workflows/       review (4 gates) - pages (publishes apps/site)
 ```
 
-One page, not a component library. Crust specifies a wallet that ships as Capacitor, a browser
-extension and Tauri; there is no shared runtime to publish to, so shipping React packages would
-mean maintaining a second implementation that drifts from the first. The page *is* the
-specification, and `tools/review.mjs` is what keeps it honest.
+## How the two audiences meet
 
-## Prototype
+**Designers** work in `apps/site` - the page they can see, served with `npm start`. Every change
+is gated by the review: contrast, targets, reflow, structure, both themes. That is what "bounded
+into the production rule" means here - the rules are enforced by CI, not remembered by people.
 
-The system has a **Prototype** section: one device frame that walks the screens like a clickable
-mock-up. It clones the same nodes documented under All screens, so there is no second copy of the
-UI to drift, and the hotspots are the mock's own controls - the bottom nav, the action bar, a back
-chevron, the primary button. Arrow keys step through a flow, Backspace goes back.
+**Engineers** consume `packages/` and never think about the system:
+
+```tsx
+import { Button } from '@bread/crust-react';
+import '@bread/crust-react/styles.css';
+import '@bread/crust-tokens/tokens.css';
+
+<Button onClick={send}>Send</Button>
+<Button variant="secondary">Cancel</Button>
+<Button critical>Confirm &amp; send</Button>
+```
+
+```js
+// tailwind.config.js - every token as a theme-following utility class
+module.exports = { presets: [require('@bread/crust-tokens/tailwind-preset')] };
+```
+
+**The two cannot drift**, mechanically: the packages are *generated* from the same files the site
+renders (`tools/build-packages.mjs`), CI fails if a committed package differs from its source
+(`--check`), and a binding test proves every component class has a rule and every `var()`
+resolves to a token. The specimen a designer approves and the component an engineer imports are
+the same bytes.
 
 ## Working in here
 

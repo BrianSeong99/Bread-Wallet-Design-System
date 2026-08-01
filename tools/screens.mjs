@@ -17,7 +17,9 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 // tool, so the two cannot drift.
 const rel = p => new URL(p, import.meta.url);
 const FLAT = existsSync(rel('./index.html'));
-const SRC = FLAT ? rel('./index.html') : rel('../site/index.html');
+const SITE = FLAT ? rel('./index.html')
+  : existsSync(rel('../site/index.html')) ? rel('../site/index.html') : rel('../apps/site/index.html');
+const SRC = SITE;
 const OUT = FLAT ? rel('./SCREENS.md') : rel('../docs/SCREENS.md');
 const html = readFileSync(SRC, 'utf8');
 
