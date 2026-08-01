@@ -36,6 +36,19 @@
      It lived in [data-theme="light"] only, so in dark every var(--stack) was
      invalid and gap silently fell back to `normal` (0). Invisible in the HTML,
      invisible in light, and the harness measures contrast and targets, not gaps. */
+  /* ---- Spacing scale ------------------------------------------------------------------------
+     Named because it was not. The system had 35 distinct rem values across 592 spacing
+     declarations -- every pixel from 1 to 16 -- against 11 uses of a --stack token. That is a 1px
+     grid, which is another way of saying no grid: each value was chosen by nudging, and nothing
+     stopped the next one being 11px.
+     The steps are Tailwind's shape (4px base with 2px half-steps), chosen because ~65% of existing
+     uses already land on it exactly. Those are migrated here with ZERO movement -- same computed
+     value, verified by diffing every box in the page before and after.
+     The rest are left alone on purpose. Snapping 149 odd-pixel values would churn geometry that is
+     deliberately paired -- .mlist's 9px inline padding exists to cancel a 9px negative margin, the
+     selection pip's offset is half a line-height -- for no gain a user could see. The harness
+     reports what is still off-scale so it stays visible instead of silently growing. */
+  --sp-0-5:0.125rem;--sp-1:0.25rem;--sp-1-5:0.375rem;--sp-2:0.5rem;--sp-2-5:0.625rem;--sp-3:0.75rem;--sp-3-5:0.875rem;--sp-4:1.0rem;--sp-5:1.25rem;--sp-6:1.5rem;--sp-8:2.0rem;
   --stack-tight:0.5rem; --stack:0.75rem; --stack-loose:1rem;
 
   /* type roles */
@@ -243,19 +256,19 @@ code{font-family:var(--mono);font-size:.86em;background:var(--code-bg);padding:.
   position:sticky;top:0;height:100vh;overflow-y:auto;border-right:1px solid var(--rule);
   background:var(--paper);padding:1.625rem 1.125rem 2.5rem;
 }
-.brand{display:flex;align-items:center;gap:0.6875rem;padding:0 0.5rem 1.375rem}
+.brand{display:flex;align-items:center;gap:0.6875rem;padding:0 var(--sp-2) 1.375rem}
 .brand img{width:2.125rem;height:2.125rem}
 .brand .bt{font-family:var(--display);font-weight:900;font-size:var(--t-cta);line-height:1}
-.brand .bs{font-size:var(--t-caption);color:var(--ink-3);font-weight:600;letter-spacing:.02em;margin-top:0.125rem}
+.brand .bs{font-size:var(--t-caption);color:var(--ink-3);font-weight:600;letter-spacing:.02em;margin-top:var(--sp-0-5)}
 .navgroup{margin-top:1.125rem}
-.navgroup>span{display:block;font-family:var(--display);font-weight:800;font-size:var(--t-caption);letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);padding:0 0.625rem 0.4375rem}
+.navgroup>span{display:block;font-family:var(--display);font-weight:800;font-size:var(--t-caption);letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);padding:0 var(--sp-2-5) 0.4375rem}
 .nav a{
-  display:flex;align-items:center;gap:0.5625rem;padding:0.4375rem 0.625rem;border-radius:var(--radius-sm);color:var(--ink-2);
+  display:flex;align-items:center;gap:0.5625rem;padding:0.4375rem var(--sp-2-5);border-radius:var(--radius-sm);color:var(--ink-2);
   font-weight:500;font-size:var(--t-body);cursor:pointer;border-left:2px solid transparent;transition:all var(--dur-fast) ease
 }
 .nav a:hover{background:var(--surface-2);color:var(--ink)}
 .nav a.active{background:var(--accent-wash);color:var(--accent-ink);border-left-color:var(--accent-ink);font-weight:600}
-.themebtn{margin:1.375rem 0.625rem 0;display:inline-flex;gap:0.5rem;align-items:center;padding:0.5625rem 0.9375rem;border-radius:var(--radius-full);border:0;background:var(--surface-2);color:var(--ink);cursor:pointer;font-family:var(--ui);font-size:var(--t-label);font-weight:600}
+.themebtn{margin:1.375rem var(--sp-2-5) 0;display:inline-flex;gap:var(--sp-2);align-items:center;padding:0.5625rem 0.9375rem;border-radius:var(--radius-full);border:0;background:var(--surface-2);color:var(--ink);cursor:pointer;font-family:var(--ui);font-size:var(--t-label);font-weight:600}
 .themebtn:hover{background:var(--surface-3)}
 
 .main{max-width:920px;padding:3.25rem 3.5rem 7.5rem}
@@ -264,63 +277,63 @@ code{font-family:var(--mono);font-size:.86em;background:var(--code-bg);padding:.
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
 .eyebrow{font-family:var(--display);font-weight:800;font-size:var(--t-label);letter-spacing:.1em;text-transform:uppercase;color:var(--accent-ink)}
-h1.title{font-size:2.75rem;font-weight:900;line-height:1.02;margin:0.625rem 0 0;letter-spacing:-.025em}
-.lede{font-size:var(--t-cta);color:var(--ink-2);max-width:60ch;margin-top:1rem;line-height:1.5}
-h2.h{font-size:1.625rem;font-weight:800;margin:2.125rem 0 0.25rem;letter-spacing:-.02em}
-h3.sh{font-size:var(--t-subhead);font-weight:800;margin:1.875rem 0 0.625rem;font-family:var(--display)}
+h1.title{font-size:2.75rem;font-weight:900;line-height:1.02;margin:var(--sp-2-5) 0 0;letter-spacing:-.025em}
+.lede{font-size:var(--t-cta);color:var(--ink-2);max-width:60ch;margin-top:var(--sp-4);line-height:1.5}
+h2.h{font-size:1.625rem;font-weight:800;margin:2.125rem 0 var(--sp-1);letter-spacing:-.02em}
+h3.sh{font-size:var(--t-subhead);font-weight:800;margin:1.875rem 0 var(--sp-2-5);font-family:var(--display)}
 .sub{color:var(--ink-2);max-width:64ch}
-p{margin:0.625rem 0}
+p{margin:var(--sp-2-5) 0}
 hr.rule{border:0;border-top:1px solid var(--rule);margin:2.5rem 0}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.125rem}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:0.875rem}
-.card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius-lg);padding:1.25rem;box-shadow:var(--shadow-1)}
-.callout{background:var(--accent-wash);padding:0.875rem 1.125rem;border-radius:var(--radius-md);margin:1.125rem 0;font-size:var(--t-body)}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-3-5)}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius-lg);padding:var(--sp-5);box-shadow:var(--shadow-1)}
+.callout{background:var(--accent-wash);padding:var(--sp-3-5) 1.125rem;border-radius:var(--radius-md);margin:1.125rem 0;font-size:var(--t-body)}
 .callout.warn{background:color-mix(in srgb,var(--neg) 10%,transparent)}
 
 /* principle list */
-.prin{counter-reset:p;margin-top:1.25rem;display:grid;gap:0.125rem}
-.prin .row{display:grid;grid-template-columns:44px 1fr;gap:1rem;padding:1.125rem 0;border-top:1px solid var(--rule)}
+.prin{counter-reset:p;margin-top:var(--sp-5);display:grid;gap:var(--sp-0-5)}
+.prin .row{display:grid;grid-template-columns:44px 1fr;gap:var(--sp-4);padding:1.125rem 0;border-top:1px solid var(--rule)}
 .prin .row:last-child{border-bottom:1px solid var(--rule)}
 .prin .n{counter-increment:p;font-family:var(--mono);font-weight:600;font-size:var(--t-heading);color:var(--accent-ink)}
 .prin .n::before{content:counter(p,decimal-leading-zero)}
 .prin h4{font-size:1.03125rem;font-weight:800}
-.prin p{margin:0.375rem 0 0;color:var(--ink-2);font-size:var(--t-body)}
-.prin .do{margin-top:0.5625rem;font-size:var(--t-label);color:var(--ink);background:var(--surface-2);border-radius:var(--radius-sm);padding:0.5rem 0.6875rem}
+.prin p{margin:var(--sp-1-5) 0 0;color:var(--ink-2);font-size:var(--t-body)}
+.prin .do{margin-top:0.5625rem;font-size:var(--t-label);color:var(--ink);background:var(--surface-2);border-radius:var(--radius-sm);padding:var(--sp-2) 0.6875rem}
 .prin .do b{color:var(--accent-ink)}
 
 /* metrics */
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;margin-top:1.375rem}
-.metric{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius-md);padding:1rem}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-3);margin-top:1.375rem}
+.metric{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius-md);padding:var(--sp-4)}
 .metric .v{font-family:var(--mono);font-weight:600;font-size:1.875rem;color:var(--ink);letter-spacing:-.02em}
 .metric .v small{color:var(--neg);font-size:var(--t-body)}
-.metric .k{font-size:var(--t-label);color:var(--ink-2);margin-top:0.25rem;line-height:1.35}
+.metric .k{font-size:var(--t-label);color:var(--ink-2);margin-top:var(--sp-1);line-height:1.35}
 
 /* swatches */
-.swrow{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:0.625rem;margin-top:0.875rem}
+.swrow{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:var(--sp-2-5);margin-top:var(--sp-3-5)}
 .sw{border:1px solid var(--rule);border-radius:var(--radius-md);overflow:hidden;background:var(--surface)}
 .sw .chip{height:3.5rem}
-.sw .meta{padding:0.5rem 0.625rem}
+.sw .meta{padding:var(--sp-2) var(--sp-2-5)}
 .sw .nm{font-size:var(--t-label);font-weight:700}
 .sw .hx{font-family:var(--mono);font-size:var(--t-caption);color:var(--ink-2)}
-.ramp{display:flex;border-radius:var(--radius-md);overflow:hidden;border:1px solid var(--rule);margin-top:0.75rem}
+.ramp{display:flex;border-radius:var(--radius-md);overflow:hidden;border:1px solid var(--rule);margin-top:var(--sp-3)}
 .ramp div{flex:1;height:3.25rem;display:flex;align-items:flex-end;justify-content:center;padding-bottom:0.3125rem;font-family:var(--mono);font-size:0.625rem}
 
 /* type specimens */
-.spec{border:1px solid var(--rule);border-radius:var(--radius-md);padding:1.25rem 1.375rem;margin-top:0.75rem;background:var(--surface)}
-.spec+.spec{margin-top:0.625rem}
-.spec .lab{font-family:var(--mono);font-size:var(--t-caption);color:var(--ink-2);margin-bottom:0.625rem;display:flex;gap:0.875rem;flex-wrap:wrap}
+.spec{border:1px solid var(--rule);border-radius:var(--radius-md);padding:var(--sp-5) 1.375rem;margin-top:var(--sp-3);background:var(--surface)}
+.spec+.spec{margin-top:var(--sp-2-5)}
+.spec .lab{font-family:var(--mono);font-size:var(--t-caption);color:var(--ink-2);margin-bottom:var(--sp-2-5);display:flex;gap:var(--sp-3-5);flex-wrap:wrap}
 .spec .lab b{color:var(--ink)}
 
 /* radius + spacing demos */
-.rdemo{display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap;margin-top:0.875rem}
+.rdemo{display:flex;gap:var(--sp-4);align-items:flex-end;flex-wrap:wrap;margin-top:var(--sp-3-5)}
 .rdemo .b{background:var(--accent-wash);border:1.5px solid var(--accent);width:4.875rem;height:4rem;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:var(--t-caption);color:var(--accent-ink);font-weight:600}
-.spdemo{display:grid;gap:0.4375rem;margin-top:0.875rem}
-.spdemo .r{display:flex;align-items:center;gap:0.75rem}
+.spdemo{display:grid;gap:0.4375rem;margin-top:var(--sp-3-5)}
+.spdemo .r{display:flex;align-items:center;gap:var(--sp-3)}
 .spdemo .bar{background:var(--accent);height:0.875rem;border-radius:var(--radius-sm)}
 .spdemo .t{font-family:var(--mono);font-size:var(--t-label);color:var(--ink-2);width:7.5rem}
 
 /* component demos */
-.demo{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius-lg);padding:1.625rem;margin-top:0.875rem;display:flex;flex-wrap:wrap;gap:0.875rem;align-items:center}
+.demo{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius-lg);padding:1.625rem;margin-top:var(--sp-3-5);display:flex;flex-wrap:wrap;gap:var(--sp-3-5);align-items:center}
 .btn{font-family:var(--ui);font-weight:700;font-size:var(--t-body);border:0;cursor:pointer;transition:all var(--dur-fast) ease}
 /* MINIMUM LABEL SIZE IS LOAD-BEARING: white on brand orange is exactly 3.00:1, which
    conforms only as WCAG "large text" (>=14pt bold = 18.66px bold). Shrink this label
@@ -335,37 +348,37 @@ hr.rule{border:0;border-top:1px solid var(--rule);margin:2.5rem 0}
    Dark inverts rather than darkening: a near-black button on a near-black page is not a button.
    The rule that survives both themes is "the primary action is the highest-contrast filled
    element on the page" -- near-black on warm white, near-white on near-black. */
-.btn-primary{background:var(--action);color:var(--on-action);border-radius:var(--radius-full);padding:0.875rem 1.625rem;font-size:var(--text-cta);font-weight:700}
+.btn-primary{background:var(--action);color:var(--on-action);border-radius:var(--radius-full);padding:var(--sp-3-5) 1.625rem;font-size:var(--text-cta);font-weight:700}
 /* Destructive fill. Exists because the accent means "recommended", and a control that erases the
    wallet must not wear the same clothes as Continue. Filled, not outlined, per the no-bordered-
    controls rule -- the weight comes from the hue, not from a border. --on-neg flips with the
    theme: white is 6.84:1 on the light --neg and would fail on the dark one, which is a light
    coral, so dark uses near-black at 6.23:1. */
-.btn-danger{background:var(--neg);color:var(--on-neg);border-radius:var(--radius-full);padding:0.875rem 1.625rem;font-size:var(--text-cta);font-weight:700}
+.btn-danger{background:var(--neg);color:var(--on-neg);border-radius:var(--radius-full);padding:var(--sp-3-5) 1.625rem;font-size:var(--text-cta);font-weight:700}
 .btn[disabled]{opacity:.45;pointer-events:none}
 .btn-primary:hover{background:var(--action-hover)}
 .btn-primary:disabled{background:var(--surface-3);color:var(--ink-3);cursor:not-allowed}
 .btn-secondary{background:var(--surface-2);color:var(--ink);border-radius:var(--radius-full);padding:0.9375rem 1.625rem}
 .btn-secondary:hover{background:var(--surface-3)}
-.btn-ghost{background:transparent;color:var(--accent-ink);padding:0.875rem 1.125rem;border-radius:var(--radius-md)}
+.btn-ghost{background:transparent;color:var(--accent-ink);padding:var(--sp-3-5) 1.125rem;border-radius:var(--radius-md)}
 .btn-ghost:hover{background:var(--accent-wash)}
 .iconbtn{width:2.75rem;height:2.75rem;border-radius:var(--radius-full);background:var(--surface-2);display:inline-flex;align-items:center;justify-content:center;border:0;cursor:pointer;color:var(--ink)}
-.chip{font-family:var(--ui);font-weight:600;font-size:var(--t-label);padding:0.5rem 0.9375rem;border-radius:var(--radius-full);border:0;color:var(--ink);background:var(--surface-2);cursor:pointer}
+.chip{font-family:var(--ui);font-weight:600;font-size:var(--t-label);padding:var(--sp-2) 0.9375rem;border-radius:var(--radius-full);border:0;color:var(--ink);background:var(--surface-2);cursor:pointer}
 .chip.on{background:var(--ink);color:var(--paper)}
-.badge{font-family:var(--ui);font-weight:600;font-size:var(--t-label);padding:0.25rem 0.625rem;border-radius:var(--radius-full)}
+.badge{font-family:var(--ui);font-weight:600;font-size:var(--t-label);padding:var(--sp-1) var(--sp-2-5);border-radius:var(--radius-full)}
 .badge.pos{background:var(--pos-wash);color:var(--pos)} .badge.pend{background:var(--accent-wash);color:var(--pend)} .badge.neg{background:color-mix(in srgb,var(--neg) 14%,transparent);color:var(--neg)}
 
 /* consolidation table */
-table.map{width:100%;border-collapse:collapse;margin-top:0.875rem;font-size:var(--t-label)}
-table.map th,table.map td{text-align:left;padding:0.625rem 0.75rem;border-bottom:1px solid var(--rule);vertical-align:top}
+table.map{width:100%;border-collapse:collapse;margin-top:var(--sp-3-5);font-size:var(--t-label)}
+table.map th,table.map td{text-align:left;padding:var(--sp-2-5) var(--sp-3);border-bottom:1px solid var(--rule);vertical-align:top}
 table.map th{font-family:var(--display);font-weight:800;font-size:var(--t-label);text-transform:uppercase;letter-spacing:.05em;color:var(--ink-2)}
 table.map td code{font-size:var(--t-label)}
-.tag{font-family:var(--ui);font-weight:700;font-size:0.65625rem;padding:0.125rem 0.5rem;border-radius:var(--radius-sm);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+.tag{font-family:var(--ui);font-weight:700;font-size:0.65625rem;padding:var(--sp-0-5) var(--sp-2);border-radius:var(--radius-sm);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
 .tag.survive{background:var(--pos-wash);color:var(--pos)} .tag.merge{background:var(--accent-wash);color:var(--pend)} .tag.retire{background:color-mix(in srgb,var(--neg) 13%,transparent);color:var(--neg)}
 
 /* --------- phone frames (product examples: mobile-first) --------- */
 .compare{display:grid;grid-template-columns:1fr 1fr;gap:2.125rem;margin-top:1.375rem;align-items:start}
-.compare .caphead{display:flex;align-items:center;gap:0.5625rem;margin-bottom:0.875rem}
+.compare .caphead{display:flex;align-items:center;gap:0.5625rem;margin-bottom:var(--sp-3-5)}
 .compare .caphead .dot{width:0.5625rem;height:0.5625rem;border-radius:50%}
 .compare .caphead .before .dot,.dot.before{background:var(--ink-3)}
 .compare .caphead b{font-family:var(--display);font-weight:800;font-size:var(--t-body)}
@@ -395,16 +408,16 @@ table.map td code{font-size:var(--t-label)}
 .mock::after{content:'';position:absolute;left:50%;transform:translateX(-50%);bottom:9px;width:134px;height:5px;border-radius:var(--radius-full);background:var(--ink);opacity:.28;pointer-events:none}
 .mock .stat{height:var(--safe-top);flex:none;display:flex;align-items:flex-end;justify-content:space-between;padding:0 20px 8px;font-family:var(--mono);font-size:var(--t-label);font-weight:600;color:var(--ink)}
 .mock .stat .r{display:flex;gap:5px;align-items:center}
-.mpad{padding:0.5rem 1rem 0;overflow:hidden;gap:var(--stack)}
-.macct{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0.25rem 0.875rem}
+.mpad{padding:var(--sp-2) var(--sp-4) 0;overflow:hidden;gap:var(--stack)}
+.macct{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-2) var(--sp-1) var(--sp-3-5)}
 .macct .l{display:flex;align-items:center;gap:0.5625rem}
 .macct .av{width:1.875rem;height:1.875rem;border-radius:50%;background:var(--pos);display:flex;align-items:center;justify-content:center;color:var(--paper);font-weight:800;font-size:var(--t-label);font-family:var(--display)}
 .macct .nm{font-weight:700;font-size:var(--t-body)}
-.mpill{display:inline-flex;align-items:center;gap:0.375rem;font-size:var(--t-label);font-weight:600;border:1px solid var(--rule-strong);border-radius:var(--radius-full);padding:0.25rem 0.6875rem;color:var(--ink)}
+.mpill{display:inline-flex;align-items:center;gap:var(--sp-1-5);font-size:var(--t-label);font-weight:600;border:1px solid var(--rule-strong);border-radius:var(--radius-full);padding:var(--sp-1) 0.6875rem;color:var(--ink)}
 .mpill .g{width:0.4375rem;height:0.4375rem;border-radius:50%;background:var(--pos)}
 /* balance card */
 .mbc{border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-1)}
-.mbc .top{padding:0.625rem 1rem 0.6875rem}
+.mbc .top{padding:var(--sp-2-5) var(--sp-4) 0.6875rem}
 /* ONE CARD HEIGHT ON EVERY HOME STATE. Measured across the eight of them, the card came out
    at FIVE different heights -- 138.6 / 141.6 / 150.0 / 155.7 / 178.7pt -- depending on whether
    the state carried a delta, a skeleton, a footnote, a mask toggle, or none of them. So
@@ -423,9 +436,9 @@ table.map td code{font-size:var(--t-label)}
 /* Label and delta share one row. Previously the delta sat on its own line below the
    amount, costing a full ~20px band on the screen the user called top-heavy; the delta
    is an attribute OF the balance, so it reads fine beside its label. */
-.mbc .balrow{display:flex;align-items:center;justify-content:space-between;gap:0.625rem}
+.mbc .balrow{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2-5)}
 .mbc .tl{font-size:var(--t-caption);font-weight:600;color:var(--ink-2)}
-.mbc .amt{font-family:var(--num);font-feature-settings:var(--num-feat);font-weight:800;letter-spacing:-.02em;margin-top:0.3125rem;display:flex;align-items:baseline;gap:0.375rem}
+.mbc .amt{font-family:var(--num);font-feature-settings:var(--num-feat);font-weight:800;letter-spacing:-.02em;margin-top:0.3125rem;display:flex;align-items:baseline;gap:var(--sp-1-5)}
 .mbc .amt small{font-size:var(--t-caption);color:var(--ink-2);font-weight:500}
 /* Delta is a CAPTION, not a badge. The filled wash pill read as senior to the balance it
    describes -- a bright blob on the label row, above the number, competing with the figure
@@ -480,7 +493,7 @@ table.map td code{font-size:var(--t-label)}
 .mbc .delta[data-dir="down"] .tri{transform:rotate(180deg)}
 /* Solid hairline, not dashed: the dashed rule read as a receipt tear and is the one
    decorative flourish left on an otherwise restrained surface. */
-.mbc .bot{border-top:1px solid var(--rule);padding:0 0.375rem 0 1rem;display:flex;align-items:center;justify-content:space-between;gap:0.5rem;min-height:44px}
+.mbc .bot{border-top:1px solid var(--rule);padding:0 var(--sp-1-5) 0 var(--sp-4);display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);min-height:44px}
 .mbc .bot .acc{font-family:var(--mono);font-size:var(--t-caption);font-weight:500;flex:1;min-width:0;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* 44pt hit area, 24pt visible dot. The shipped button is w-5 h-5 = 20pt, and it slipped
@@ -501,8 +514,8 @@ table.map td code{font-size:var(--t-label)}
   opacity:.75;cursor:pointer}
 .mbc .bot .acopy2 .svgic{width:1rem;height:1rem}
 /* action bar */
-.mactions{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-top:1rem}
-.mact{display:flex;flex-direction:column;align-items:center;gap:0.375rem}
+.mactions{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-2);margin-top:var(--sp-4)}
+.mact{display:flex;flex-direction:column;align-items:center;gap:var(--sp-1-5)}
 .mact .sq{width:2.875rem;height:2.875rem;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:var(--pure-white);font-size:var(--t-cta)}
 .mact .lb{font-size:var(--t-caption);font-weight:600;color:var(--ink-2)}
 /* assets */
@@ -523,10 +536,10 @@ table.map td code{font-size:var(--t-label)}
    SearchInput on Explore with a filteredTokens list; the component stays specified for the
    surfaces that need it (token picker, contacts). */
 .msearch{background:var(--surface-2);border-radius:var(--radius-full);min-height:48px;width:100%;
-  display:flex;align-items:center;gap:0.5625rem;padding:0 1rem;color:var(--ink-2);font-size:var(--t-label);
+  display:flex;align-items:center;gap:0.5625rem;padding:0 var(--sp-4);color:var(--ink-2);font-size:var(--t-label);
   border:0;font-family:var(--ui);text-align:left;cursor:pointer;font-weight:500}
 .msearch .svgic{width:1.0625rem;height:1.0625rem;flex:none;opacity:.75}
-.mrow{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 0}
+.mrow{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-3) 0}
 /* Consecutive rows are one list, so they use the tight tier rather than the
    component tier -- 12px between list items reads as separate cards. */
 .mrow + .mrow{margin-top:calc(var(--stack-tight) - var(--stack))}
@@ -557,7 +570,7 @@ table.map td code{font-size:var(--t-label)}
    (white) sitting on --paper (near-white) and reads as nothing, which is why the
    bar looked odd. The tray also means inactive segments need no fill of their own:
    the contrast between the tray and the raised pill IS the selected state. */
-.mseg{display:flex;align-items:center;gap:0.25rem;padding:0.25rem;
+.mseg{display:flex;align-items:center;gap:var(--sp-1);padding:var(--sp-1);
   background:var(--surface-2);border-radius:var(--radius-full)}
 /* Five segments only exist once isEarnEnabled() flips true (overview·send·receive·
    earn·swap). At the 360pt extension width that overflows by 9.1pt: the collapsed
@@ -580,7 +593,7 @@ table.map td code{font-size:var(--t-label)}
 .flagdot{width:0.5rem;height:0.5rem;border-radius:50%;background:var(--ink-3);display:inline-block;vertical-align:middle;flex:none}
 [data-earn="on"] .flagdot{background:var(--pos)}
 .themebtn .flagval{font-family:var(--mono);font-size:0.65625rem}
-.earnnote{margin:0.625rem 0 0.25rem;padding:0.6875rem 0.8125rem;border-radius:var(--radius-md);background:var(--surface-2);color:var(--ink-2);font-size:var(--t-label);line-height:1.5}
+.earnnote{margin:var(--sp-2-5) 0 var(--sp-1);padding:0.6875rem 0.8125rem;border-radius:var(--radius-md);background:var(--surface-2);color:var(--ink-2);font-size:var(--t-label);line-height:1.5}
 [data-earn="on"] .earnnote{display:none}
 /* Collapsed chips may compress (never below a 40px tap area) so the active chip always
    wins the space it needs; min-width:max-content on the active chip makes clipping
@@ -630,7 +643,7 @@ table.map td code{font-size:var(--t-label)}
   transition:max-width var(--dur-normal) var(--ease-out-cubic),
              opacity var(--dur-normal) var(--ease-out-cubic),
              margin-left var(--dur-normal) var(--ease-out-cubic)}
-.mseg .seg.on .lbl{max-width:6.25rem;opacity:1;margin-left:0.25rem}
+.mseg .seg.on .lbl{max-width:6.25rem;opacity:1;margin-left:var(--sp-1)}
 @media (prefers-reduced-motion: reduce){.mseg .seg,.mseg .seg .lbl{transition-duration:.01ms}}
 /* fund-wallet prompt */
 /* ---- Prompt card ------------------------------------------------------------------
@@ -670,9 +683,9 @@ table.map td code{font-size:var(--t-label)}
    The negative inline margin lets cards bleed to the screen edge while keeping the first
    card aligned to the 16px gutter -- so the peeking card reads as continuing off-screen
    rather than being clipped by a container. */
-.mcar{display:flex;gap:0.625rem;overflow-x:auto;scroll-snap-type:x mandatory;
+.mcar{display:flex;gap:var(--sp-2-5);overflow-x:auto;scroll-snap-type:x mandatory;
   scrollbar-width:none;-ms-overflow-style:none;
-  margin-inline:-1rem;padding-inline:1rem;scroll-padding-left:1rem}
+  margin-inline:-1rem;padding-inline:var(--sp-4);scroll-padding-left:var(--sp-4)}
 .mcar::-webkit-scrollbar{display:none}
 .mcar > .mprompt{flex:0 0 88%;scroll-snap-align:start}
 
@@ -687,7 +700,7 @@ table.map td code{font-size:var(--t-label)}
 /* Sheet chrome, extracted from the inline styles the older Accounts mock used. */
 .msheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);box-shadow:var(--shadow-2);
   border-radius:var(--radius-lg) var(--radius-lg) 0 0;
-  padding:0.75rem 1rem max(1rem,var(--safe-bottom,0));
+  padding:var(--sp-3) var(--sp-4) max(var(--sp-4),var(--safe-bottom,0));
   display:flex;flex-direction:column;max-height:76%}
 /* The sheet already reserves the home-indicator inset, so an action zone inside
    one must not reserve it a second time. */
@@ -710,12 +723,12 @@ table.map td code{font-size:var(--t-label)}
    with a ring to clip at the bottom edge. */
 .msheet > .mlist:last-child{padding-bottom:0}
 .mshandle{width:2.5rem;height:0.3125rem;border-radius:var(--radius-full);background:var(--rule-strong);
-  margin:0 auto 0.875rem;flex:none}
+  margin:0 auto var(--sp-3-5);flex:none}
 /* The trailing pull belongs to the HEADER, not to the button in it -- the same correction
    .pghead needed. Left on the button, the -0.625rem hung 10pt past the header's own box and
    the reflow sweep caught it on the Accounts sheet the moment one appeared here. */
-.mshead{font-family:var(--display);font-weight:800;font-size:var(--t-subhead);margin-bottom:0.75rem;
-  flex:none;display:flex;align-items:center;gap:0.25rem;margin-right:-0.625rem}
+.mshead{font-family:var(--display);font-weight:800;font-size:var(--t-subhead);margin-bottom:var(--sp-3);
+  flex:none;display:flex;align-items:center;gap:var(--sp-1);margin-right:-0.625rem}
 .mshead .shgear,.mshead .shact{margin-right:0}
 /* Settings is a gear at the header's top-right, not a footer button. Two reasons, and the
    first is consistency rather than taste: the app ALREADY uses this exact placement --
@@ -736,11 +749,11 @@ table.map td code{font-size:var(--t-label)}
    padding-right:0, which left .shgear's -0.625rem pull nothing to cancel and overflowed the
    header by exactly 10pt on every one. The pull belongs to the header, not the button: it is
    the header that wants to sit flush with .mpad's padding. */
-.pghead{display:flex;align-items:center;padding:0.375rem 0 0.75rem;margin-right:-0.625rem}
+.pghead{display:flex;align-items:center;padding:var(--sp-1-5) 0 var(--sp-3);margin-right:-0.625rem}
 .pghead > .ttl{font-family:var(--display);font-weight:800;font-size:var(--t-title)}
 .pghead .shgear{margin-right:0}
 /* Leading icon on a button: gap from the label, sized to the label's cap height. */
-.btn.withic{display:flex;align-items:center;justify-content:center;gap:0.5rem}
+.btn.withic{display:flex;align-items:center;justify-content:center;gap:var(--sp-2)}
 .btn.withic .svgic{width:1.0625rem;height:1.0625rem;flex:none}
 /* 44pt target, negative-margined so it does not inflate the sheet header. */
 .shback{min-width:44px;min-height:44px;margin:-0.6875rem -0.5rem -0.6875rem -0.75rem;border:0;background:none;
@@ -764,7 +777,7 @@ table.map td code{font-size:var(--t-label)}
      Inline padding is cancelled by an equal negative margin (card width is
      unchanged); block padding is NOT cancelled, because the list wanted more
      breathing room above and below regardless of the ring. */
-  padding:0.625rem 0.5625rem 0.875rem;margin-inline:-0.5625rem}
+  padding:var(--sp-2-5) 0.5625rem var(--sp-3-5);margin-inline:-0.5625rem}
 .mlist>*{flex:none}
 /* A 3px LEFT stripe in the account colour. This was lost when the Apple-Wallet stack was
    rewritten as a list -- --card-rim stayed defined and stopped being used, so in DARK all
@@ -803,7 +816,7 @@ table.map td code{font-size:var(--t-label)}
    scope and --ink-2 resolves to the PAGE's dark grey, which on a dark card rendered invisible.
    Third time this trap has bitten: anything positioned onto a scoped surface must take its
    colour from that surface's own tokens, which are theme-level and scope-independent. */
-.mlist [data-pattern] > .aedit{position:absolute;top:0;right:0;min-height:44px;min-width:52px;padding:0 0.625rem;border:0;
+.mlist [data-pattern] > .aedit{position:absolute;top:0;right:0;min-height:44px;min-width:52px;padding:0 var(--sp-2-5);border:0;
   background:none;color:var(--balance-fg-muted);font-family:var(--ui);font-size:var(--t-caption);
   font-weight:700;display:flex;align-items:center;z-index:3;cursor:pointer}
 /* Inline before the name, not in the corner -- the corner now belongs to Edit, and a check
@@ -826,7 +839,7 @@ table.map td code{font-size:var(--t-label)}
              transform var(--dur-normal) var(--ease-out-cubic)}
 .mlist .achk path{fill:none;stroke:var(--balance);stroke-width:1.9;stroke-linecap:round;
   stroke-linejoin:round}
-.mbc.sel .achk{width:0.9375rem;margin-right:0.375rem;opacity:1;transform:none}
+.mbc.sel .achk{width:0.9375rem;margin-right:var(--sp-1-5);opacity:1;transform:none}
 
 /* ---- Per-account sheet: where renaming and identity live -------------------------------
    Separated from the stack deliberately. The stack answers "which account"; this answers
@@ -838,21 +851,21 @@ table.map td code{font-size:var(--t-label)}
    different numbers. Now .drow.filled: one component, one variant. COMPONENTS.md already
    listed DetailRow/ReviewRow duplication as a defect to merge; adding a third was drift of my
    own making. */
-.drow.filled{align-items:center;min-height:52px;padding:0 0.875rem;background:var(--surface-2);
+.drow.filled{align-items:center;min-height:52px;padding:0 var(--sp-3-5);background:var(--surface-2);
   border-radius:var(--radius-md)}
 .drow.filled .k{font-size:var(--t-caption);font-weight:600}
 .drow.filled .v{font-size:var(--t-label);font-weight:700}
 .drow .v.mono{font-family:var(--mono);font-weight:500}
 .drow.editing{box-shadow:0 0 0 1.5px var(--accent)}
 .drow.editing .v::after{content:'';display:inline-block;width:0.09375rem;height:0.875rem;
-  background:var(--accent);margin-left:0.125rem;vertical-align:-0.125rem;animation:caret 1s step-end infinite}
+  background:var(--accent);margin-left:var(--sp-0-5);vertical-align:-0.125rem;animation:caret 1s step-end infinite}
 @keyframes caret{50%{opacity:0}}
-.mstk-lbl2{font-size:var(--t-caption);font-weight:700;color:var(--ink-2);margin-bottom:0.5rem}
+.mstk-lbl2{font-size:var(--t-caption);font-weight:700;color:var(--ink-2);margin-bottom:var(--sp-2)}
 .drow .acopy{min-width:44px;min-height:44px;margin:-0.25rem -0.625rem -0.25rem 0;border:0;background:none;
   padding:0;flex:none;display:flex;align-items:center;justify-content:center;
   color:var(--ink-2);cursor:pointer}
 .drow .acopy .svgic{width:1.0625rem;height:1.0625rem}
-.aswatches{display:flex;gap:0.625rem}
+.aswatches{display:flex;gap:var(--sp-2-5)}
 .aswatches .sw{width:2.375rem;height:2.375rem;border-radius:50%;flex:none;position:relative}
 .aswatches .sw.on::after{content:'\2713';position:absolute;inset:0;display:flex;
   align-items:center;justify-content:center;color:var(--pure-white);font-size:var(--t-body);font-weight:800}
@@ -917,7 +930,7 @@ table.map td code{font-size:var(--t-label)}
 [data-pattern="yagasuri"]{--pat-img:var(--pat-yagasuri)}
 
 /* Vertical rhythm lives on the CONTAINER, not inside each component.
-   Before: .mpad was a flex column with `gap: normal`, so every child invented its own
+   Before: .mpad was a flex column with `gap:normal`, so every child invented its own
    spacing via padding/margins -- measured values in play were 2, 4, 6, 9, 10, 11, 13, 16,
    20, almost none on the 4px grid, and rect-to-rect gaps came out 0/0/20/10/10/0. That is
    the skill's named anti-pattern: "similar UI levels with inconsistent spacing".
@@ -937,8 +950,8 @@ table.map td code{font-size:var(--t-label)}
    See SPEC.md, "A container's size belongs to the container". The body clamps to 2 lines and a
    longer message earns a chevron into Notification detail: truncation is only acceptable because
    it now leads somewhere. */
-.mprompt{display:flex;align-items:center;gap:0.625rem;background:var(--surface-2);min-height:3.875rem;
-  border-radius:var(--radius-md);padding:0.5rem 0.25rem 0.5rem 0.8125rem}
+.mprompt{display:flex;align-items:center;gap:var(--sp-2-5);background:var(--surface-2);min-height:3.875rem;
+  border-radius:var(--radius-md);padding:var(--sp-2) var(--sp-1) var(--sp-2) 0.8125rem}
 .mprompt[data-status="neg"]{background:var(--st-wash)}
 .mprompt[data-status="warn"]{background:var(--st-wash)}
 /* The 4px right padding is sized for a .pcta or .pdis to overhang it. A prompt with neither --
@@ -949,7 +962,7 @@ table.map td code{font-size:var(--t-label)}
    overhangs the card padding instead of the padding collapsing to accommodate it. When a
    dismiss sits beside it the pair is held 8px apart -- one thumb-width must not contain two
    targets, which is the whole point of the .pdis note above. */
-.mprompt .pcta{min-height:44px;padding:0 0.75rem;margin:-0.5rem 0.5rem -0.5rem 0;border:0;
+.mprompt .pcta{min-height:44px;padding:0 var(--sp-3);margin:-0.5rem var(--sp-2) -0.5rem 0;border:0;
   background:var(--surface-3);color:var(--ink);border-radius:var(--radius-full);flex:none;
   font-family:var(--ui);font-weight:800;font-size:var(--t-caption);cursor:pointer}
 .mprompt[data-status] .pcta{background:var(--paper)}
@@ -959,7 +972,7 @@ table.map td code{font-size:var(--t-label)}
    state it cannot touch. Losing it also ends the crowding the .pdis note warns about, since the
    retry and the dismiss were two targets inside one thumb-width. --stack-tight of right padding
    because the chip is now the edge of the card. */
-.mprompt:not(:has(.pdis)){padding-right:0.5rem}
+.mprompt:not(:has(.pdis)){padding-right:var(--sp-2)}
 .mprompt:not(:has(.pdis)) .pcta{margin-right:0}
 /* .bnote is GONE -- the footnote under the balance, used by the unpriced-asset and
    unclaimed-note screens. It was a second notification channel: a card that grows a line of
@@ -997,10 +1010,10 @@ table.map td code{font-size:var(--t-label)}
 /* Empty-list block. Centred, no illustration -- the app ships no empty-state art and inventing
    some here would be a spec the implementation cannot honour. */
 .emptyb{display:flex;flex-direction:column;align-items:center;text-align:center;
-  padding:1.75rem 1rem 1.25rem;background:var(--surface-2);border-radius:var(--radius-md)}
+  padding:1.75rem var(--sp-4) var(--sp-5);background:var(--surface-2);border-radius:var(--radius-md)}
 .emptyb .et{font-family:var(--display);font-weight:800;font-size:var(--t-body)}
-.emptyb .eb{font-size:var(--t-caption);color:var(--ink-2);margin-top:0.25rem;line-height:1.4;max-width:15rem}
-.emptyb .btn{margin-top:0.875rem;min-height:44px;padding:0.625rem 1.125rem;width:auto}
+.emptyb .eb{font-size:var(--t-caption);color:var(--ink-2);margin-top:var(--sp-1);line-height:1.4;max-width:15rem}
+.emptyb .btn{margin-top:var(--sp-3-5);min-height:44px;padding:var(--sp-2-5) 1.125rem;width:auto}
 
 .mprompt .ptx{flex:1;min-width:0}
 .mprompt .pt{font-family:var(--display);font-weight:800;font-size:var(--t-label);line-height:1.25}
@@ -1024,7 +1037,7 @@ table.map td code{font-size:var(--t-label)}
 .mprompt .pmore{align-self:center;flex:none;min-width:44px;min-height:44px;margin:-0.5rem -0.25rem -0.5rem 0;
   border:0;background:none;padding:0;display:flex;align-items:center;justify-content:center;
   color:var(--ink-3);font-size:var(--t-body);cursor:pointer}
-/* 44pt hit area WITHOUT forcing asymmetric card padding: negative margin lets the target
+/* 44pt hit area WITHOUT forcing asymmetric card padding:negative margin lets the target
    overhang the 12px padding instead of the padding shrinking to 4px to accommodate it.
    The chevron that used to sit here is gone -- a 5px glyph 11px from a 44px dismiss target
    put two trailing affordances inside one thumb-width, which is the crowding the skill's
@@ -1034,7 +1047,7 @@ table.map td code{font-size:var(--t-label)}
   padding:0;flex:none;display:flex;align-items:center;justify-content:center;
   color:var(--ink-2);font-size:var(--t-label);cursor:pointer}
 /* Dots appear at 2+ only, matching PromptCarousel, which renders a lone slide bare. */
-.mpdots{display:flex;justify-content:center;gap:0.3125rem;margin-top:0.5rem}
+.mpdots{display:flex;justify-content:center;gap:0.3125rem;margin-top:var(--sp-2)}
 .mpdots i{width:0.3125rem;height:0.3125rem;border-radius:50%;background:var(--rule-strong);display:block}
 .mpdots i.on{background:var(--ink-3)}
 .mprompt .tx{flex:1}
@@ -1079,8 +1092,8 @@ table.map td code{font-size:var(--t-label)}
 .glassdemo{position:relative;height:210px;border-radius:var(--radius-lg);overflow:hidden;
   background:var(--paper);display:flex;flex-direction:column}
 .glassdemo.short{height:150px}
-.glassdemo .gd-bg{padding:0.75rem 0.875rem;display:flex;flex-direction:column;gap:0.625rem}
-.glassdemo .gd-row{display:flex;align-items:center;gap:0.625rem;font-size:var(--t-label)}
+.glassdemo .gd-bg{padding:var(--sp-3) var(--sp-3-5);display:flex;flex-direction:column;gap:var(--sp-2-5)}
+.glassdemo .gd-row{display:flex;align-items:center;gap:var(--sp-2-5);font-size:var(--t-label)}
 .glassdemo .gd-row b{flex:1;font-weight:700}
 .glassdemo .gd-row i{font-family:var(--num);font-style:normal;color:var(--ink-2);font-size:var(--t-label)}
 .glassdemo .gd-sw{width:1.625rem;height:1.625rem;border-radius:var(--radius-sm);flex:none}
@@ -1101,8 +1114,8 @@ table.map td code{font-size:var(--t-label)}
         read of a curved edge. This is the one place the mock is a stand-in, and on device
         the native material should be used rather than reproduced.
    The blur is static. Never animate it -- it is paint-bound. */
-.mnav{--i:0;margin:auto 1.3125rem max(1.3125rem,var(--safe-bottom,0));min-height:61px;padding:0.375rem;
-  border-radius:var(--radius-full);display:flex;align-items:stretch;gap:0.375rem;position:relative;
+.mnav{--i:0;margin:auto 1.3125rem max(1.3125rem,var(--safe-bottom,0));min-height:61px;padding:var(--sp-1-5);
+  border-radius:var(--radius-full);display:flex;align-items:stretch;gap:var(--sp-1-5);position:relative;
   isolation:isolate;
   background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,0)),var(--nav-bg);
   -webkit-backdrop-filter:blur(1.5rem) saturate(180%);backdrop-filter:blur(24px) saturate(180%);
@@ -1140,15 +1153,15 @@ table.map td code{font-size:var(--t-label)}
   .mnav.sliding::before{animation:none}}
 /* tabBarMinimizeBehavior: on scroll the bar collapses so "only the current tab item remains
    visible as a small circular button". Documented and demoed, not enabled by default. */
-.mnav.mini{margin-left:auto;margin-right:1.3125rem;width:3.8125rem;padding:0.375rem}
+.mnav.mini{margin-left:auto;margin-right:1.3125rem;width:3.8125rem;padding:var(--sp-1-5)}
 .mnav.mini::before{width:3.0625rem;transform:none}
 .mnav.mini .t:not(.on){display:none}
 .mnav.mini .t{min-width:49px;flex:none}
 .mnav.mini .t span:not(.svgic):not(.nbadge){position:absolute;width:0.0625rem;height:0.0625rem;
   overflow:hidden;clip-path:inset(50%)}
 [data-theme="dark"] .mnav{box-shadow:none}   /* dark uses surface-step, not shadow */
-.mnav .t{flex:1;min-width:77px;min-height:49px;padding:0.3125rem 0.625rem;border-radius:var(--radius-full);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.25rem;
+.mnav .t{flex:1;min-width:77px;min-height:49px;padding:0.3125rem var(--sp-2-5);border-radius:var(--radius-full);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--sp-1);
   color:var(--nav-ink-off);font-size:var(--t-caption);line-height:0.8125rem;font-weight:600;
   background:none;border:0;cursor:pointer;position:relative;z-index:1}
 /* Weight DOES switch on activation here, and that reverses an earlier rule of mine.
@@ -1196,7 +1209,7 @@ table.map td code{font-size:var(--t-label)}
 /* ---- Alternate B: full-width Material 3 bar ---- */
 .mnav.m3{width:auto;margin:auto 0 0;min-height:64px;border-radius:0;padding:0;gap:0;
   box-shadow:none;background:var(--surface);border-top:1px solid var(--rule)}
-.mnav.m3 .t{flex:1;min-width:0;border-radius:0;padding:0.5rem 0 0.625rem}
+.mnav.m3 .t{flex:1;min-width:0;border-radius:0;padding:var(--sp-2) 0 var(--sp-2-5)}
 .mnav.m3 .t.on{background:none}
 .mnav.m3 .t.on .svgic{background-color:var(--accent-ink)}
 .mnav.m3 .t.on .m3ind{position:absolute;top:0.375rem;left:50%;transform:translateX(-50%);
@@ -1216,32 +1229,32 @@ table.map td code{font-size:var(--t-label)}
 /* welcome mock */
 /* KEPT AS SHIPPED — 130px mark, 72px display headline, 20px body, vertically centred.
    The only change is the bottom: the system action zone (52px CTA + safe-area clearance). */
-.mwel{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding:var(--safe-top,3.875rem) 1.5rem 0;background:var(--paper);--safe-top:62px;--safe-bottom:34px}
-.mwel .mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;padding:2rem 0}
+.mwel{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding:var(--safe-top,3.875rem) var(--sp-6) 0;background:var(--paper);--safe-top:62px;--safe-bottom:34px}
+.mwel .mid{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;padding:var(--sp-8) 0}
 .mwel .logo{width:130px;height:auto}
-.mwel h2{font-family:var(--display);font-weight:700;font-size:var(--t-display);line-height:.99;letter-spacing:-.02em;text-align:center;margin-top:1rem;color:var(--ink)}
-.mwel p{text-align:center;color:var(--ink);font-size:1.25rem;line-height:1.3;font-weight:500;margin-top:1rem}
-.legend{display:flex;gap:1.125rem;flex-wrap:wrap;margin-top:1rem;font-size:var(--t-label);color:var(--ink-2)}
+.mwel h2{font-family:var(--display);font-weight:700;font-size:var(--t-display);line-height:.99;letter-spacing:-.02em;text-align:center;margin-top:var(--sp-4);color:var(--ink)}
+.mwel p{text-align:center;color:var(--ink);font-size:1.25rem;line-height:1.3;font-weight:500;margin-top:var(--sp-4)}
+.legend{display:flex;gap:1.125rem;flex-wrap:wrap;margin-top:var(--sp-4);font-size:var(--t-label);color:var(--ink-2)}
 .legend b{color:var(--ink)}
 . nn{}
 .small{font-size:var(--t-label);color:var(--ink-2)}
-ul.tick{list-style:none;padding:0;margin:0.75rem 0}
+ul.tick{list-style:none;padding:0;margin:var(--sp-3) 0}
 ul.tick li{padding:0.4375rem 0 0.4375rem 1.625rem;position:relative;border-top:1px solid var(--rule);font-size:var(--t-body)}
 ul.tick li:before{content:"→";position:absolute;left:0.125rem;color:var(--accent-ink);font-family:var(--mono)}
-.phase{border:1px solid var(--rule);border-radius:var(--radius-md);padding:1.125rem 1.25rem;margin-top:0.75rem;background:var(--surface)}
-.phase .ph{font-family:var(--display);font-weight:800;font-size:var(--t-body);display:flex;align-items:center;gap:0.625rem}
+.phase{border:1px solid var(--rule);border-radius:var(--radius-md);padding:1.125rem var(--sp-5);margin-top:var(--sp-3);background:var(--surface)}
+.phase .ph{font-family:var(--display);font-weight:800;font-size:var(--t-body);display:flex;align-items:center;gap:var(--sp-2-5)}
 .phase .ph .no{font-family:var(--mono);color:var(--accent-ink)}
-.phase .safe{font-size:var(--t-label);font-weight:700;color:var(--pos);background:var(--pos-wash);padding:0.125rem 0.5625rem;border-radius:var(--radius-sm);margin-left:auto}
-.phase p{font-size:var(--t-body);color:var(--ink-2);margin:0.5rem 0 0}
+.phase .safe{font-size:var(--t-label);font-weight:700;color:var(--pos);background:var(--pos-wash);padding:var(--sp-0-5) 0.5625rem;border-radius:var(--radius-sm);margin-left:auto}
+.phase p{font-size:var(--t-body);color:var(--ink-2);margin:var(--sp-2) 0 0}
 .pending{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:1.625rem;text-align:center;background:repeating-linear-gradient(45deg,var(--surface),var(--surface) 0.625rem,var(--surface-2) 0.625rem,var(--surface-2) 1.25rem)}
-.pending b{font-family:var(--display);font-size:var(--t-body);display:block;margin-top:0.5rem}
+.pending b{font-family:var(--display);font-size:var(--t-body);display:block;margin-top:var(--sp-2)}
 .pending .pmark{font-size:1.875rem;color:var(--ink-3)}
-.pending p{font-size:var(--t-label);color:var(--ink-2);margin-top:0.5rem;line-height:1.4}
+.pending p{font-size:var(--t-label);color:var(--ink-2);margin-top:var(--sp-2);line-height:1.4}
 /* motion playground */
-.mcell .mlabel{font-family:var(--mono);font-size:var(--t-caption);color:var(--ink-2);margin-bottom:0.875rem}
+.mcell .mlabel{font-family:var(--mono);font-size:var(--t-caption);color:var(--ink-2);margin-bottom:var(--sp-3-5)}
 .btn.press{transition:transform var(--dur-fast) var(--ease-standard)}
 .btn.press:active{transform:scale(.95)}
-.segdemo{position:relative;display:grid;grid-template-columns:repeat(3,74px);background:var(--surface-2);border-radius:var(--radius-full);padding:0.25rem;width:max-content}
+.segdemo{position:relative;display:grid;grid-template-columns:repeat(3,74px);background:var(--surface-2);border-radius:var(--radius-full);padding:var(--sp-1);width:max-content}
 .segdemo button{position:relative;z-index:1;border:0;background:transparent;color:var(--ink-2);font-family:var(--ui);font-weight:600;font-size:var(--t-label);height:2.125rem;border-radius:var(--radius-full);cursor:pointer;transition:color var(--dur-base)}
 .segdemo button.on{color:var(--ink)}
 .segdemo .ind{position:absolute;top:0.25rem;left:0.25rem;width:4.625rem;height:2.125rem;background:var(--surface);border-radius:var(--radius-full);box-shadow:var(--shadow-1);transform:translateX(calc(var(--i,0)*74px));transition:transform var(--dur-base) var(--ease-spatial)}
@@ -1265,14 +1278,14 @@ ul.tick li:before{content:"→";position:absolute;left:0.125rem;color:var(--acce
 .sheetwrap.open .sheetc{transform:translateY(0)}
 @media (prefers-reduced-motion: reduce){.btn.press,.segdemo .ind,.toggle .knob,.sheet,.sheetback{transition-duration:.01ms}.skel,.replay.go .box{animation-duration:.01ms}}
 /* ---------- full screen set ---------- */
-.scrgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:1rem;--ps:.5}
+.scrgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-6);margin-top:var(--sp-4);--ps:.5}
 /* Collapsible flows. <details>, not a JS accordion: it is keyboard-operable and toggleable with
    no script, it survives Ctrl+F (the browser opens a closed details to reveal a match), and the
    open/closed state is a DOM property the review harness can force rather than a class it has to
    know about. 178 screens is past the point where one scroll is navigation. */
 details.flow{border-top:1px solid var(--rule);margin-top:1.75rem}
-details.flow>summary{display:flex;align-items:center;gap:0.625rem;cursor:pointer;list-style:none;
-  padding:1.125rem 0 0;margin-bottom:0.375rem}
+details.flow>summary{display:flex;align-items:center;gap:var(--sp-2-5);cursor:pointer;list-style:none;
+  padding:1.125rem 0 0;margin-bottom:var(--sp-1-5)}
 details.flow>summary::-webkit-details-marker{display:none}
 details.flow>summary>h2.h{margin:0;flex:1}
 /* The disclosure triangle is drawn, not borrowed: the native marker is unstyleable across engines
@@ -1290,8 +1303,8 @@ details.flow>summary{min-height:44px}
    Singletons stay inline in a plain grid: a one-item accordion is a control that hides nothing,
    and generating one per screen produced 150 of them. Lighter than the flow summary because it is
    subordinate to it: no rule above, smaller triangle, the label in sentence case. */
-details.grp{margin:0.25rem 0 0.5rem}
-details.grp>summary{display:flex;align-items:center;gap:0.5rem;min-height:44px;cursor:pointer;
+details.grp{margin:var(--sp-1) 0 var(--sp-2)}
+details.grp>summary{display:flex;align-items:center;gap:var(--sp-2);min-height:44px;cursor:pointer;
   list-style:none;color:var(--ink-2)}
 details.grp>summary::-webkit-details-marker{display:none}
 details.grp>summary::before{content:'';width:0.3125rem;height:0.3125rem;flex:none;
@@ -1316,18 +1329,18 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
   font-size:var(--t-caption);color:var(--ink-3);flex:none;min-width:1.75rem}
 .scrnote{font-size:var(--t-caption);color:var(--ink-2);margin-top:0.5625rem;line-height:1.45}
 .obillus{display:block;margin:0 auto;width:var(--hero-w);height:auto}
-.obh{font-family:var(--display);font-weight:900;font-size:var(--t-title);line-height:1.12;text-align:center;margin-top:1rem}
+.obh{font-family:var(--display);font-weight:900;font-size:var(--t-title);line-height:1.12;text-align:center;margin-top:var(--sp-4)}
 .obp{font-size:var(--t-label);color:var(--ink-2);text-align:center;margin-top:0.5625rem;line-height:1.45}
 /* STEP-SCREEN CONTENT BLOCK — the layout rule I was violating.
    Content is optically centred in the space between the progress bar and the action
    zone, never top-anchored with the slack dumped underneath. Sits ~7% above true
    centre because the eye reads geometric centre as slightly low. */
 .obmid{flex:1;display:flex;flex-direction:column;justify-content:center;padding-bottom:7%}
-.obmid .obh{margin-top:1.5rem}
-.obmid .obp{margin-top:0.75rem;max-width:30ch;margin-left:auto;margin-right:auto}
+.obmid .obh{margin-top:var(--sp-6)}
+.obmid .obp{margin-top:var(--sp-3);max-width:30ch;margin-left:auto;margin-right:auto}
 /* Every step needs a way back (Navigation/Back Button, High). The chevron shares the
    progress row so it costs no vertical space, and carries a full 44pt tap target. */
-.obtop{display:flex;align-items:center;gap:0.625rem;padding:0.25rem 0 0.875rem}
+.obtop{display:flex;align-items:center;gap:var(--sp-2-5);padding:var(--sp-1) 0 var(--sp-3-5)}
 .obtop .obback{width:2.75rem;height:2.75rem;margin-left:-0.8125rem;flex:none;display:flex;align-items:center;
   justify-content:center;font-size:1.25rem;color:var(--ink);cursor:pointer;
   background:none;border:0;padding:0;font-family:var(--ui);border-radius:var(--radius-full);
@@ -1340,11 +1353,11 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
    Backup sub-flow: BackupSeed 1 · VerifySeed 2 · CreatePassword 3 · RecoveryMethod 4.
    Import: ImportFromSeed 1 · ImportRecoveryMethod 4. Detours never move the bar. */
 /* onboarding form bits */
-.opw{width:100%;background:var(--surface-2);border:0;border-radius:var(--radius-md);padding:0.8125rem 0.875rem;
+.opw{width:100%;background:var(--surface-2);border:0;border-radius:var(--radius-md);padding:0.8125rem var(--sp-3-5);
   font-family:var(--ui);font-size:1rem;color:var(--ink);margin-top:0.5625rem}
 .opw.ok{box-shadow:0 0 0 1.5px var(--rule-strong)}
-.opwmeta{display:flex;align-items:center;justify-content:space-between;gap:0.75rem;margin-top:0.5rem;font-size:var(--t-caption);color:var(--ink-2)}
-.opwbar{display:flex;gap:0.25rem;margin-top:0.5rem}
+.opwmeta{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);margin-top:var(--sp-2);font-size:var(--t-caption);color:var(--ink-2)}
+.opwbar{display:flex;gap:var(--sp-1);margin-top:var(--sp-2)}
 .opwbar i{height:0.25rem;flex:1;border-radius:var(--radius-full);background:var(--surface-3);display:block}
 /* Status has FOUR meanings and THREE roles. data-status scopes the pair, exactly like
    data-surface and data-tier, so a component writes .stx/.sfill/.swash and is correct for
@@ -1357,9 +1370,9 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
 [data-status="warn"]{--st:var(--warn);--st-wash:var(--warn-wash)}
 [data-status="neg"] {--st:var(--neg);--st-wash:var(--neg-wash)}
 [data-status="pend"]{--st:var(--pend);--st-wash:transparent}
-.srole{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;margin-top:0.5625rem}
+.srole{display:flex;align-items:center;gap:var(--sp-2);flex-wrap:wrap;margin-top:0.5625rem}
 .srole .stx{font-size:var(--t-label);font-weight:700;color:var(--st)}
-.srole .sfill,.srole .swash{font-size:var(--t-caption);font-weight:700;padding:0.25rem 0.625rem;border-radius:var(--radius-full)}
+.srole .sfill,.srole .swash{font-size:var(--t-caption);font-weight:700;padding:var(--sp-1) var(--sp-2-5);border-radius:var(--radius-full)}
 .srole .sfill{background:var(--st);color:var(--paper)}
 .srole .swash{background:var(--st-wash);color:var(--st)}
 .srole .nti{width:0.625rem;height:0.625rem;border-radius:50%;display:block;background:var(--st);flex:none}
@@ -1383,21 +1396,21 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
 .sword.err{box-shadow:0 0 0 1.5px var(--neg)}
 /* No icon: the app's icon set ships no alert glyph, and inventing one would break the
    "use the real assets" rule. Weight + colour + position under the field carry it. */
-.ferr{margin-top:0.625rem;font-size:var(--t-caption);line-height:1.45;font-weight:700;color:var(--neg)}
-.fok{margin-top:0.5rem;font-size:var(--t-caption);line-height:1.45;font-weight:700;color:var(--pos)}
-.ropt{text-align:left;background:var(--surface-2);border-radius:var(--radius-md);padding:0.75rem 0.8125rem;margin-top:0.5625rem;position:relative}
+.ferr{margin-top:var(--sp-2-5);font-size:var(--t-caption);line-height:1.45;font-weight:700;color:var(--neg)}
+.fok{margin-top:var(--sp-2);font-size:var(--t-caption);line-height:1.45;font-weight:700;color:var(--pos)}
+.ropt{text-align:left;background:var(--surface-2);border-radius:var(--radius-md);padding:var(--sp-3) 0.8125rem;margin-top:0.5625rem;position:relative}
 
 .ropt .rt2{font-family:var(--display);font-weight:800;font-size:var(--t-body);display:flex;align-items:center;gap:0.4375rem}
-.ropt .rd{font-size:var(--t-caption);color:var(--ink-2);line-height:1.45;margin-top:0.25rem}
+.ropt .rd{font-size:var(--t-caption);color:var(--ink-2);line-height:1.45;margin-top:var(--sp-1)}
 .rbadge{font-size:var(--t-caption);font-weight:800;background:var(--accent);color:var(--on-accent-sm);
   padding:0.0625rem 0.4375rem;border-radius:var(--radius-sm);letter-spacing:.02em}
-.sword{background:var(--surface-2);border-radius:var(--radius-sm);padding:0.4375rem 0.5rem;font-size:var(--t-caption);
-  display:flex;gap:0.375rem;align-items:baseline}
+.sword{background:var(--surface-2);border-radius:var(--radius-sm);padding:0.4375rem var(--sp-2);font-size:var(--t-caption);
+  display:flex;gap:var(--sp-1-5);align-items:baseline}
 .sword i{color:var(--ink-2);font-style:normal;font-family:var(--num);font-size:var(--t-caption);min-width:13px}
 .sword span{color:var(--ink-3)}
 .spin2{width:1.625rem;height:1.625rem;border-radius:50%;border:3px solid var(--surface-3);
   border-top-color:var(--accent);animation:spin var(--dur-loop-spin) linear infinite;margin:0 auto}
-.progdots{display:flex;gap:0.3125rem;justify-content:center;padding:0.25rem 0 0.875rem}
+.progdots{display:flex;gap:0.3125rem;justify-content:center;padding:var(--sp-1) 0 var(--sp-3-5)}
 .progdots i{height:0.3125rem;border-radius:var(--radius-full);background:var(--surface-3);flex:1;display:block}
 .progdots i.on{background:var(--accent)}
 /* splash — full-bleed brand orange, knocked-out white mark */
@@ -1466,9 +1479,9 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
    with a band is the same box as one without. grid-auto-rows:1fr equalises rows,
    and the logo well is flex:1 so wordmarks of different intrinsic heights still
    centre in the same space (this is what makes the OZ mark stop compressing). */
-.gguard{display:grid;grid-template-columns:1fr 1fr;gap:0.5625rem;grid-auto-rows:1fr;margin-top:0.75rem}
+.gguard{display:grid;grid-template-columns:1fr 1fr;gap:0.5625rem;grid-auto-rows:1fr;margin-top:var(--sp-3)}
 .gcard{position:relative;display:flex;flex-direction:column;border-radius:var(--radius-md);background:var(--surface);
-  box-shadow:0 0 0 1.5px var(--rule-strong);overflow:hidden;text-align:center;padding-top:1.25rem;min-height:101px}
+  box-shadow:0 0 0 1.5px var(--rule-strong);overflow:hidden;text-align:center;padding-top:var(--sp-5);min-height:101px}
 /* ---- Selection ring: ONE treatment, three components -------------------------------------
    .mbc (account card), .gcard (Guardian) and .ropt (recovery option) all use .sel, so they now
    share one rule instead of each carrying its own box-shadow.
@@ -1507,64 +1520,64 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
    altering a partner's mark is a usage problem rather than a design choice. A plate keeps each
    mark exactly as its owner supplies it and restores the contrast it was drawn for.
    Miden's own mark is #FF5500 and needs no plate, so the rule targets partner logos only. */
-.gcard .glogo{flex:1;display:flex;align-items:center;justify-content:center;gap:0.3125rem;padding:0.375rem 0.625rem;min-height:38px}
+.gcard .glogo{flex:1;display:flex;align-items:center;justify-content:center;gap:0.3125rem;padding:var(--sp-1-5) var(--sp-2-5);min-height:38px}
 [data-theme="dark"] .gcard .glogo:has(img:not([src*="miden"])){
-  background:#FFFFFF;border-radius:var(--radius-sm);margin:0.375rem 0.625rem;padding:0.375rem 0.5rem;min-height:30px}
+  background:#FFFFFF;border-radius:var(--radius-sm);margin:var(--sp-1-5) var(--sp-2-5);padding:var(--sp-1-5) var(--sp-2);min-height:30px}
 .gcard .glogo img{max-width:100%;max-height:1.5rem;width:auto;height:auto}
 .gcard .gname{font-family:var(--display);font-weight:800;font-size:var(--t-label)}
-.gcard .gmeta{font-size:var(--t-caption);color:var(--ink-2);padding:0 0.25rem 0.4375rem;line-height:1.4}
+.gcard .gmeta{font-size:var(--t-caption);color:var(--ink-2);padding:0 var(--sp-1) 0.4375rem;line-height:1.4}
 /* guardian explainer sheet */
-.isec{padding:0.5rem 0}
+.isec{padding:var(--sp-2) 0}
 .isec+.isec{border-top:1px solid var(--rule)}
-.isec .it{display:flex;align-items:center;gap:0.375rem;justify-content:center;font-family:var(--display);font-weight:800;font-size:var(--t-caption)}
+.isec .it{display:flex;align-items:center;gap:var(--sp-1-5);justify-content:center;font-family:var(--display);font-weight:800;font-size:var(--t-caption)}
 .isec .it i{width:1.125rem;height:1.125rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:var(--t-caption);font-weight:700;color:var(--paper);font-style:normal;flex:none}
-.isec .id2{font-size:var(--t-caption);color:var(--ink-2);text-align:center;line-height:1.45;margin-top:0.25rem}
+.isec .id2{font-size:var(--t-caption);color:var(--ink-2);text-align:center;line-height:1.45;margin-top:var(--sp-1)}
 .seedgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.4375rem}
-.seedw{background:var(--surface-2);border-radius:var(--radius-sm);padding:0.5rem 0.4375rem;font-size:var(--t-caption);font-weight:600;display:flex;gap:0.375rem;align-items:baseline}
+.seedw{background:var(--surface-2);border-radius:var(--radius-sm);padding:var(--sp-2) 0.4375rem;font-size:var(--t-caption);font-weight:600;display:flex;gap:var(--sp-1-5);align-items:baseline}
 .seedw i{color:var(--ink-2);font-style:normal;font-family:var(--num);font-size:var(--t-caption);min-width:13px}
-.qrbox{width:168px;height:168px;margin:0 auto;background:var(--pure-white);border-radius:var(--radius-md);padding:0.75rem;box-shadow:var(--shadow-1)}
+.qrbox{width:168px;height:168px;margin:0 auto;background:var(--pure-white);border-radius:var(--radius-md);padding:var(--sp-3);box-shadow:var(--shadow-1)}
 /* The modules are a FIXED near-black, never var(--ink). --ink flips to #FFFFFF in dark, and
    .qrbox is --pure-white in both themes, so the theme-aware version painted a white pattern on a
    white card: the code vanished in dark mode. A QR is a scannable artifact, not UI -- it is
    dark-on-light everywhere, in every theme, because a scanner has no theme. The contrast sweep
    cannot catch this: it measures text and .nti fills, not background-image patterns. */
 .qrpat{width:100%;height:100%;background-image:repeating-conic-gradient(#1C1A18 0 25%,transparent 0 50%);background-size:13px 13px;border-radius:var(--radius-sm)}
-.setgroup{background:var(--surface-2);border-radius:var(--radius-lg);padding:0.125rem 0.75rem;margin-bottom:0.5625rem}
+.setgroup{background:var(--surface-2);border-radius:var(--radius-lg);padding:var(--sp-0-5) var(--sp-3);margin-bottom:0.5625rem}
 .setrow{display:flex;align-items:center;gap:0.6875rem;padding:0.6875rem 0;font-size:var(--t-label);font-weight:600}
 .setrow+.setrow{border-top:1px solid var(--rule)}
 .setrow img,.setrow .svgic{width:1.1875rem;height:1.1875rem;flex:none;opacity:.75}
 .setrow .ch{margin-left:auto;color:var(--ink-3);font-size:var(--t-body)}
-.vaultrow{display:flex;align-items:center;gap:0.6875rem;background:var(--surface-2);border-radius:var(--radius-md);padding:0.75rem;margin-bottom:0.5rem}
+.vaultrow{display:flex;align-items:center;gap:0.6875rem;background:var(--surface-2);border-radius:var(--radius-md);padding:var(--sp-3);margin-bottom:var(--sp-2)}
 .vaultrow img,.vaultrow .svgic{width:1.875rem;height:1.875rem;flex:none}
 .vaultrow .vn{font-weight:700;font-size:var(--t-label)}
 .vaultrow .vs{font-size:var(--t-caption);color:var(--ink-2);margin-top:0.0625rem}
 .vapy{margin-left:auto;text-align:right}
 .vapy .p{font-family:var(--num);font-feature-settings:var(--num-feat);font-weight:800;font-size:var(--t-body);color:var(--pos)}
 .vapy .pl{font-size:var(--t-caption);color:var(--ink-2)}
-.metricrow{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:0.625rem}
-.metric2{background:var(--surface-2);border-radius:var(--radius-md);padding:0.6875rem 0.75rem}
+.metricrow{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-2);margin-top:var(--sp-2-5)}
+.metric2{background:var(--surface-2);border-radius:var(--radius-md);padding:0.6875rem var(--sp-3)}
 .metric2 .mv{font-family:var(--num);font-feature-settings:var(--num-feat);font-weight:800;font-size:1rem}
-.metric2 .mk{font-size:var(--t-caption);color:var(--ink-2);margin-top:0.125rem}
-.filters{display:flex;gap:0.375rem;padding:0.125rem 0 0.625rem;flex-wrap:wrap}
-.filters .fc{font-size:var(--t-caption);font-weight:700;padding:0.375rem 0.75rem;border-radius:var(--radius-full);background:var(--surface-2);color:var(--ink-2)}
+.metric2 .mk{font-size:var(--t-caption);color:var(--ink-2);margin-top:var(--sp-0-5)}
+.filters{display:flex;gap:var(--sp-1-5);padding:var(--sp-0-5) 0 var(--sp-2-5);flex-wrap:wrap}
+.filters .fc{font-size:var(--t-caption);font-weight:700;padding:var(--sp-1-5) var(--sp-3);border-radius:var(--radius-full);background:var(--surface-2);color:var(--ink-2)}
 .filters .fc.on{background:var(--ink);color:var(--paper)}
 .rcpt{text-align:center;padding-top:1.375rem}
-.rcpt .ok2{width:3.625rem;height:3.625rem;border-radius:50%;background:var(--pos-wash);color:var(--pos);display:flex;align-items:center;justify-content:center;font-size:1.625rem;margin:0 auto 0.875rem}
-.daygrid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.625rem;margin-top:0.5rem}
+.rcpt .ok2{width:3.625rem;height:3.625rem;border-radius:50%;background:var(--pos-wash);color:var(--pos);display:flex;align-items:center;justify-content:center;font-size:1.625rem;margin:0 auto var(--sp-3-5)}
+.daygrid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-2-5);margin-top:var(--sp-2)}
 .dapp{text-align:center;font-size:var(--t-caption);color:var(--ink-2)}
 .dapp .tile{width:2.875rem;height:2.875rem;border-radius:var(--radius-md);background:var(--surface-2);margin:0 auto 0.3125rem;display:flex;align-items:center;justify-content:center}
 .dapp .tile img,.dapp .tile .svgic{width:1.625rem;height:1.625rem}
-.urlbar{background:var(--surface-2);border-radius:var(--radius-full);padding:0.6875rem 1rem;font-size:var(--t-label);color:var(--ink-3);display:flex;align-items:center;gap:0.5rem}
+.urlbar{background:var(--surface-2);border-radius:var(--radius-full);padding:0.6875rem var(--sp-4);font-size:var(--t-label);color:var(--ink-3);display:flex;align-items:center;gap:var(--sp-2)}
 /* ---------- viewports & adaptivity ---------- */
-.vpset{display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap;margin-top:0.875rem}
+.vpset{display:flex;gap:var(--sp-4);align-items:flex-start;flex-wrap:wrap;margin-top:var(--sp-3-5)}
 .vpcell{text-align:center}
 .vpstage{overflow:hidden;position:relative}
 .vpinner{transform:scale(.5);transform-origin:top left;border:1px solid var(--rule-strong);border-radius:var(--radius-lg);background:var(--paper);display:flex;flex-direction:column;overflow:hidden}
 .vplab{font-family:var(--mono);font-size:0.625rem;color:var(--ink-3);padding-top:0.4375rem}
-.vpinner .mpad{padding:0.875rem 1.5rem 0}          /* the 24px gutter, held */
-.vpinner.tight .mpad{padding:0.875rem 1rem 0}    /* <360: gutter drops to 16 */
+.vpinner .mpad{padding:var(--sp-3-5) var(--sp-6) 0}          /* the 24px gutter, held */
+.vpinner.tight .mpad{padding:var(--sp-3-5) var(--sp-4) 0}    /* <360: gutter drops to 16 */
 /* ---------- send → review → sign flow ---------- */
-.sh2{display:flex;align-items:center;gap:0.625rem;padding:0.125rem 0 0.875rem}
+.sh2{display:flex;align-items:center;gap:var(--sp-2-5);padding:var(--sp-0-5) 0 var(--sp-3-5)}
 /* 44pt hit area, 30px disc. The disc is drawn by ::before so the target can be
    bigger than the thing you see -- this is the only back affordance on every
    pushed step, and it measured 30x30. Sized in px: SC 2.5.5 is an absolute floor. */
@@ -1572,7 +1585,7 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
   display:flex;align-items:center;justify-content:center;flex:none;font-size:var(--t-body)}
 .sh2 .bk2::before{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--surface-2);z-index:-1}
 .sh2 .t2{font-family:var(--display);font-weight:800;font-size:var(--t-subhead)}
-.recip{display:flex;align-items:center;gap:0.625rem;background:var(--surface-2);border-radius:var(--radius-md);padding:0.6875rem 0.8125rem}
+.recip{display:flex;align-items:center;gap:var(--sp-2-5);background:var(--surface-2);border-radius:var(--radius-md);padding:0.6875rem 0.8125rem}
 .recip .rav{width:1.625rem;height:1.625rem;border-radius:50%;background:var(--tx-sent);flex:none}
 .recip .raddr{font-family:var(--mono);font-size:var(--t-label);flex:1}
 .recip .redit{font-size:var(--t-label);font-weight:700;color:var(--accent-ink)}
@@ -1587,7 +1600,7 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
    indicator are siblings, both clearing 44pt, held apart by the card's own gap. Where the
    indicator is static -- a Miden address carries its own network, so there is nothing to
    choose -- the edit region takes the whole row. */
-.recip.rto{padding:0.375rem 0.5rem 0.375rem 0.375rem;gap:0.5rem}
+.recip.rto{padding:var(--sp-1-5) var(--sp-2) var(--sp-1-5) var(--sp-1-5);gap:var(--sp-2)}
 .recip.rto .rmain{display:flex;align-items:center;gap:0.5625rem;flex:1;min-width:0;
   min-height:44px;padding:0 0.3125rem;border-radius:var(--radius-sm);cursor:pointer}
 .recip.rto .rav{width:2.125rem;height:2.125rem}
@@ -1603,7 +1616,7 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
 .recip .fam{background:none;padding:0.1875rem 0;flex:none}
 /* EVM variant: the indicator becomes the caller for `Send · network`, so it takes the
    44pt floor and the chevron .fam already uses to mean "this one goes somewhere". */
-.recip .fam.tap{min-height:44px;padding:0 0.5rem;cursor:pointer;color:var(--ink)}
+.recip .fam.tap{min-height:44px;padding:0 var(--sp-2);cursor:pointer;color:var(--ink)}
 /* ---------- the amount cell ----------
    Pinned left, chip pinned right, and the figure therefore grows TOWARD the chip. The
    pair used to be centred inside a flex-wrap row, so the chip moved on every keystroke
@@ -1637,7 +1650,7 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
    scrnote along with what a 56/44 extension would buy. */
 /* Fixed height, so the four states are the same object with different contents and the
    tier changing mid-entry never moves the rows below it. */
-.amtrow{display:flex;align-items:center;gap:0.5rem;height:var(--t-display)}
+.amtrow{display:flex;align-items:center;gap:var(--sp-2);height:var(--t-display)}
 .amtcell{flex:1;min-width:0;display:flex;align-items:center;font-size:var(--t-balance);
   font-family:var(--num);font-feature-settings:var(--num-feat);font-weight:800;
   line-height:1;letter-spacing:-.03em}
@@ -1665,15 +1678,15 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
 .amtcell.two .ln{display:flex;align-items:center;white-space:nowrap;height:1em}
 /* One slot under the figure, one height, whatever it holds -- the conversion, the reason
    the CTA is dead, or the rule that was broken. Left-aligned with the figure it is about. */
-.amtsub{display:flex;align-items:center;gap:0.375rem;min-height:1.25rem;margin-top:0.375rem;
+.amtsub{display:flex;align-items:center;gap:var(--sp-1-5);min-height:1.25rem;margin-top:var(--sp-1-5);
   font-size:var(--t-label);color:var(--ink-2)}
 .amtsub.err{color:var(--neg)}
-.amtblk .availrow{margin-top:0.625rem;padding:0.3125rem 0.5rem 0.3125rem 0.8125rem}
+.amtblk .availrow{margin-top:var(--sp-2-5);padding:0.3125rem var(--sp-2) 0.3125rem 0.8125rem}
 /* Route row. Same shape as .availrow so the two read as one block of consequences rather than a
    readout and a control -- the only difference is the chevron, which is the whole signal that one
    of them can be changed. Absent, not disabled, on a same-chain send. */
-.routerow{display:flex;align-items:center;gap:0.5rem;width:100%;margin-top:0.375rem;min-height:44px;
-  padding:0.3125rem 0.5rem 0.3125rem 0.8125rem;border:0;border-radius:var(--radius-md);
+.routerow{display:flex;align-items:center;gap:var(--sp-2);width:100%;margin-top:var(--sp-1-5);min-height:44px;
+  padding:0.3125rem var(--sp-2) 0.3125rem 0.8125rem;border:0;border-radius:var(--radius-md);
   background:var(--surface-2);font-family:var(--ui);cursor:pointer;text-align:left}
 .routerow .rr-k{font-size:var(--t-caption);font-weight:600;color:var(--ink-2);flex:none}
 .routerow .rr-v{font-size:var(--t-label);font-weight:700;color:var(--ink);flex:1;min-width:0;
@@ -1685,56 +1698,56 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
    falls ABOVE the pad, so header/recipient/amount hold their Y from the top and pad+CTA
    hold theirs from the bottom; the CTA now owns the safe inset the pad used to carry. */
 .amtscr .pad{margin-top:auto;padding-bottom:0}
-.amtscr .zone{margin-top:0;padding-top:0;padding-bottom:max(1rem,var(--safe-bottom,0))}
-.amtblock{text-align:center;padding:1.875rem 0 0.875rem}
+.amtscr .zone{margin-top:0;padding-top:0;padding-bottom:max(var(--sp-4),var(--safe-bottom,0))}
+.amtblock{text-align:center;padding:1.875rem 0 var(--sp-3-5)}
 .amtblock .aa{font-family:var(--num);font-feature-settings:var(--num-feat);font-weight:800;font-size:var(--t-balance);letter-spacing:-.02em}
 .amtblock .af{font-size:var(--t-label);color:var(--ink-2);margin-top:0.3125rem}
-.availrow{display:flex;align-items:center;justify-content:space-between;background:var(--surface-2);border-radius:var(--radius-md);padding:0.625rem 0.8125rem;font-size:var(--t-label);color:var(--ink-2)}
-.notice{display:flex;gap:0.5rem;border-radius:var(--radius-md);padding:0.5625rem 0.75rem;font-size:var(--t-caption);line-height:1.4;font-weight:600;
-  background:color-mix(in srgb,var(--neg) 10%,transparent);color:var(--neg);margin-top:0.625rem}
+.availrow{display:flex;align-items:center;justify-content:space-between;background:var(--surface-2);border-radius:var(--radius-md);padding:var(--sp-2-5) 0.8125rem;font-size:var(--t-label);color:var(--ink-2)}
+.notice{display:flex;gap:var(--sp-2);border-radius:var(--radius-md);padding:0.5625rem var(--sp-3);font-size:var(--t-caption);line-height:1.4;font-weight:600;
+  background:color-mix(in srgb,var(--neg) 10%,transparent);color:var(--neg);margin-top:var(--sp-2-5)}
 /* The safe area is paid once, by whatever sits last in the frame. A .zone followed by the bottom
    nav is not last -- the nav's own bottom margin already clears the home indicator -- so a zone
    that also pays max(1rem, --safe-bottom) charges the inset twice and leaves 34px between the CTA
    and the nav where a gutter was wanted. Below the nav there is nothing to clear. */
-.zone{margin-top:auto;padding-top:1rem;padding-bottom:max(1rem,var(--safe-bottom,0))}
-.mock:has(.mnav) .zone{padding-bottom:0.75rem}
+.zone{margin-top:auto;padding-top:var(--sp-4);padding-bottom:max(var(--sp-4),var(--safe-bottom,0))}
+.mock:has(.mnav) .zone{padding-bottom:var(--sp-3)}
 /* Any button in the action zone is full-width, not just the primary variant. The rule was
    scoped to .btn-primary, so putting a secondary in the same slot silently lost the width --
    the zone's geometry is a property of the SLOT, not of which variant sits in it. */
-.zone .btn{width:100%;padding:0.8125rem 0.625rem;min-height:52px}
+.zone .btn{width:100%;padding:0.8125rem var(--sp-2-5);min-height:52px}
 /* Two peer actions, neither primary. This sheet's primary job is SELECTING an account, and
    that happens by tapping a card -- so an orange CTA in the footer competed with the actual
    task and implied "Add account" was the point of the screen. Both are filled-secondary at
    equal width: same weight, same shape, no hierarchy invented between them.
    Not outlined, per the no-bordered-controls rule -- filled-secondary is the peer treatment. */
-.zpair{display:flex;gap:0.625rem}
-.zpair .btn{flex:1;min-height:52px;padding:0.8125rem 0.625rem}
+.zpair{display:flex;gap:var(--sp-2-5)}
+.zpair .btn{flex:1;min-height:52px;padding:0.8125rem var(--sp-2-5)}
 
 .zone .gh{min-height:44px;display:flex;align-items:center;justify-content:center;font-size:var(--t-label);font-weight:700;color:var(--ink-2)}
 .critical{background:var(--accent-critical)}
 /* ---------- error / failure screens ---------- */
-.errscr{width:238px;border:1px solid var(--rule);border-radius:var(--radius-lg);background:var(--paper);padding:1.25rem 1.0625rem;display:flex;flex-direction:column;align-items:center;text-align:center;min-height:322px}
+.errscr{width:238px;border:1px solid var(--rule);border-radius:var(--radius-lg);background:var(--paper);padding:var(--sp-5) 1.0625rem;display:flex;flex-direction:column;align-items:center;text-align:center;min-height:322px}
 .eic{width:3.125rem;height:3.125rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:var(--t-heading);margin-bottom:0.8125rem}
 .errscr .et{font-family:var(--display);font-weight:800;font-size:1.03125rem;line-height:1.2}
-.errscr .es{font-size:var(--t-label);color:var(--ink-2);margin-top:0.5rem;line-height:1.5}
+.errscr .es{font-size:var(--t-label);color:var(--ink-2);margin-top:var(--sp-2);line-height:1.5}
 .errscr .reassure{margin-top:0.8125rem;background:var(--pos-wash);color:var(--pos);border-radius:var(--radius-md);padding:0.5625rem 0.6875rem;font-size:var(--t-caption);font-weight:700;line-height:1.4}
 .errscr .det{margin-top:0.6875rem;font-family:var(--mono);font-size:0.625rem;color:var(--ink-3);word-break:break-all}
-.errscr .acts{margin-top:auto;width:100%;padding-top:1rem}
-.errscr .acts .btn-primary{width:100%;padding:0.75rem 0.625rem}
-.errscr .acts .sec{margin-top:0.625rem;font-size:var(--t-label);font-weight:700;color:var(--ink-2)}
+.errscr .acts{margin-top:auto;width:100%;padding-top:var(--sp-4)}
+.errscr .acts .btn-primary{width:100%;padding:var(--sp-3) var(--sp-2-5)}
+.errscr .acts .sec{margin-top:var(--sp-2-5);font-size:var(--t-label);font-weight:700;color:var(--ink-2)}
 /* ---------- component gallery ---------- */
-.crow{display:flex;flex-wrap:wrap;gap:1.125rem;align-items:flex-start;background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius-lg);padding:1.25rem;margin-top:0.75rem}
-.ccol{display:flex;flex-direction:column;gap:0.625rem}
-.clabel{font-family:var(--mono);font-size:0.625rem;color:var(--ink-3);letter-spacing:.03em;margin-bottom:0.125rem}
+.crow{display:flex;flex-wrap:wrap;gap:1.125rem;align-items:flex-start;background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius-lg);padding:var(--sp-5);margin-top:var(--sp-3)}
+.ccol{display:flex;flex-direction:column;gap:var(--sp-2-5)}
+.clabel{font-family:var(--mono);font-size:0.625rem;color:var(--ink-3);letter-spacing:.03em;margin-bottom:var(--sp-0-5)}
 .fld{width:270px}
 .msheet .fld{width:auto}
-.fld label{display:block;font-size:var(--t-label);font-weight:600;color:var(--ink-2);margin-bottom:0.375rem}
-.fld .inp{width:100%;min-height:44px;background:var(--surface-2);border:0;border-radius:var(--radius-md);padding:0.8125rem 0.875rem;font-family:var(--ui);font-size:var(--t-body);color:var(--ink);outline:none;transition:box-shadow var(--dur-fast) ease,background var(--dur-fast) ease}
+.fld label{display:block;font-size:var(--t-label);font-weight:600;color:var(--ink-2);margin-bottom:var(--sp-1-5)}
+.fld .inp{width:100%;min-height:44px;background:var(--surface-2);border:0;border-radius:var(--radius-md);padding:0.8125rem var(--sp-3-5);font-family:var(--ui);font-size:var(--t-body);color:var(--ink);outline:none;transition:box-shadow var(--dur-fast) ease,background var(--dur-fast) ease}
 .fld .inp::placeholder{color:var(--ink-3)}
 .fld .inp:focus{box-shadow:var(--focus-ring);background:var(--surface)}
 .fld.err .inp{box-shadow:0 0 0 1.5px var(--neg)}
 .fld .inp:disabled{opacity:.45;cursor:not-allowed}
-.fld .hint{font-size:var(--t-caption);margin-top:0.375rem;color:var(--ink-3)}
+.fld .hint{font-size:var(--t-caption);margin-top:var(--sp-1-5);color:var(--ink-3)}
 .fld.err .hint{color:var(--neg);font-weight:600}
 /* The scan affordance belongs with the address field, not in the bottom action zone. It was a
    ghost row under Continue -- two steps away from the input it fills, and competing with the
@@ -1743,20 +1756,20 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
    Icon is the app's own qr-scan.svg, copied in -- and it needed a stroke added, like key.svg
    and search.svg before it, since these files carry fill="none" and the app's <Icon> component
    supplies the paint as a prop. */
-.fieldrow{display:flex;align-items:center;gap:0.5rem}
+.fieldrow{display:flex;align-items:center;gap:var(--sp-2)}
 .scanbtn{min-width:48px;min-height:48px;flex:none;border:0;border-radius:var(--radius-full);
   background:var(--surface-2);color:var(--ink-2);display:flex;align-items:center;
   justify-content:center;cursor:pointer}
 .scanbtn .svgic{width:1.25rem;height:1.25rem}
-.searchf{background:var(--surface-2);border-radius:var(--radius-full);padding:0.75rem 1.125rem;display:flex;gap:0.5625rem;align-items:center;color:var(--ink-3);font-size:var(--t-body);width:270px}
+.searchf{background:var(--surface-2);border-radius:var(--radius-full);padding:var(--sp-3) 1.125rem;display:flex;gap:0.5625rem;align-items:center;color:var(--ink-3);font-size:var(--t-body);width:270px}
 /* The typed value needs its own box to truncate on. A bare text node inside a
    flex container is an anonymous flex item, and text-overflow silently does
    nothing to those -- a 44-character Solana address ran 43px past the field. */
 .searchf>.val{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.amtent{text-align:center;padding:0.625rem 0;width:270px}
+.amtent{text-align:center;padding:var(--sp-2-5) 0;width:270px}
 .amtent .big{font-family:var(--num);font-feature-settings:var(--num-feat);font-weight:800;font-size:2.375rem;letter-spacing:-.02em;color:var(--ink)}
 .amtent .big .cur{color:var(--ink-3)}
-.amtent .sub2{font-size:var(--t-label);color:var(--ink-2);margin-top:0.375rem}
+.amtent .sub2{font-size:var(--t-label);color:var(--ink-2);margin-top:var(--sp-1-5)}
 .maxb{background:var(--surface-2);border:0;border-radius:var(--radius-full);padding:0.4375rem 0.9375rem;font-weight:700;font-size:var(--t-label);cursor:pointer;color:var(--ink);font-family:var(--ui)}
 .chk,.rad{display:inline-flex;align-items:center;gap:0.5625rem;font-size:var(--t-body);cursor:pointer;color:var(--ink);font-family:var(--ui)}
 .chk .box{width:1.375rem;height:1.375rem;border-radius:var(--radius-sm);background:var(--surface-3);display:flex;align-items:center;justify-content:center;font-size:var(--t-label);font-weight:800;transition:background var(--dur-base) ease,transform var(--dur-base) var(--ease-spatial)}
@@ -1767,8 +1780,8 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
    rather than as a form field with a caption. Circular by request: these are not exclusive
    options, so the radio affordance is not being borrowed for a single-choice group. */
 .acklist{display:flex;flex-direction:column}
-.acklist .shlab{margin:0 0 0.375rem}
-.ackl{display:flex;align-items:flex-start;gap:0.6875rem;padding:0.625rem 0;min-height:44px;cursor:pointer}
+.acklist .shlab{margin:0 0 var(--sp-1-5)}
+.ackl{display:flex;align-items:flex-start;gap:0.6875rem;padding:var(--sp-2-5) 0;min-height:44px;cursor:pointer}
 .ackl+.ackl{border-top:1px solid var(--rule)}
 .ackl .box{width:1.375rem;height:1.375rem;border-radius:50%;flex:none;margin-top:0.0625rem;
   background:var(--surface-3);display:flex;align-items:center;justify-content:center;
@@ -1778,12 +1791,12 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
 .ackl.on .box::after{content:'\2713';color:var(--on-accent)}
 .ackl .tx{min-width:0;display:flex;flex-direction:column}
 .ackl .t{font-family:var(--display);font-weight:800;font-size:var(--t-label);line-height:1.3}
-.ackl .d{font-size:var(--t-caption);color:var(--ink-2);margin-top:0.125rem;line-height:1.4}
+.ackl .d{font-size:var(--t-caption);color:var(--ink-2);margin-top:var(--sp-0-5);line-height:1.4}
 .chk.on .box{background:var(--accent);transform:scale(1.06)}
 .rad .cir{width:1.375rem;height:1.375rem;border-radius:50%;background:var(--surface-3);display:flex;align-items:center;justify-content:center;transition:background var(--dur-base) ease}
 .rad .cir i{width:0.5625rem;height:0.5625rem;border-radius:50%;background:transparent;transform:scale(.4);transition:background var(--dur-base) ease,transform var(--dur-base) var(--ease-spatial);display:block}
 .rad.on .cir{background:var(--accent)} .rad.on .cir i{background:var(--on-accent);transform:scale(1)}
-.pcard{display:flex;align-items:center;gap:0.75rem;background:var(--surface-2);border-radius:var(--radius-md);padding:0.8125rem 0.9375rem;width:310px}
+.pcard{display:flex;align-items:center;gap:var(--sp-3);background:var(--surface-2);border-radius:var(--radius-md);padding:0.8125rem 0.9375rem;width:310px}
 /* Review card: filled surface (no outline), a hero for what's being sent, and the
    TOTAL visually separated — it's the value the user is actually approving. */
 /* App-native: three stacked soft rounded blocks with space between them — no hairline
@@ -1794,7 +1807,7 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
    helper.ts: pending / active / complete / failed.
    The tick and spinner are SHAPES, not glyph characters -- a 9px character trips the 11pt text
    floor, which caught me twice before on the delta triangle and the selection check. */
-.scrnote2{font-size:var(--t-caption);color:var(--ink-2);line-height:1.45;margin-top:0.625rem}
+.scrnote2{font-size:var(--t-caption);color:var(--ink-2);line-height:1.45;margin-top:var(--sp-2-5)}
 /* ---- hero input --------------------------------------------------------
    Recipient and amount are one pattern: a borderless field where the typed
    value IS the screen. Shipped draws the address at 40px. 40 is not a step on
@@ -1818,7 +1831,7 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
    count, longest tier that fits. */
 .heroin{font-family:var(--mono);font-size:var(--fit-4);font-weight:700;line-height:1.15;
   letter-spacing:-.02em;color:var(--ink-3);word-break:normal;overflow-wrap:anywhere;
-  margin:0.375rem 0 1.125rem;height:calc(3 * 1.15 * var(--fit-4) + 2px);display:flex;
+  margin:var(--sp-1-5) 0 1.125rem;height:calc(3 * 1.15 * var(--fit-4) + 2px);display:flex;
   flex-direction:column;justify-content:center;overflow:hidden}
 .heroin.fit-1{font-size:var(--fit-1)}
 .heroin.fit-2{font-size:var(--fit-2)}
@@ -1838,7 +1851,7 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
    whose meaning is the whole row -- so the one element carrying "this is your choice" sat as far
    from the choice as the layout allows, competing with the value in the same slot, and read as an
    action you could press. Replaced everywhere by the ring the account cards already use.
-   Rows take an INSET ring where cards take an outer one with a gap: a card floats with space
+   Rows take an INSET ring where cards take an outer one with a gap:a card floats with space
    around it, a row is edge-to-edge in a list, and an outer ring would cross its neighbours. Same
    idea, adapted to the container -- and the fill is what makes it unmistakable at a glance, since
    a 2px outline alone is a thin signal on a busy row. */
@@ -1861,7 +1874,7 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
      matching negative margin buys the fill 8px of air on each side while the box, and therefore
      every glyph in it, stays exactly where it was unselected. Both containers a selected row
      lives in have room for the bleed: .mlist carries 9px of inline padding, .mpad 16px. */
-  margin-inline:-0.5rem;padding-inline:0.5rem}
+  margin-inline:-0.5rem;padding-inline:var(--sp-2)}
 /* The non-colour half of the state (SC 1.4.1): a fill is colour, so the label carries weight too. */
 .mrow.sel .nm,.netrow.sel .nname{font-weight:800}
 /* ---- The pip IS the state; the fill is decoration ------------------------------------------
@@ -1912,7 +1925,7 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
   background:var(--surface);border-radius:var(--radius-lg);box-shadow:var(--shadow-2);
   overflow:hidden;text-align:center}
 .sysdlg .sdt{font-family:var(--display);font-weight:800;font-size:var(--t-body);padding:1.125rem 1.125rem 0.3125rem}
-.sysdlg .sdb{font-size:var(--t-label);color:var(--ink-2);padding:0 1.125rem 1rem;line-height:1.4}
+.sysdlg .sdb{font-size:var(--t-label);color:var(--ink-2);padding:0 1.125rem var(--sp-4);line-height:1.4}
 .sysdlg .sda{display:flex;border-top:1px solid var(--rule)}
 .sysdlg .sda button{flex:1;min-height:44px;border:0;background:none;font-family:var(--ui);
   font-size:var(--t-label);cursor:pointer;color:var(--ink);font-weight:600}
@@ -1920,13 +1933,13 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
 .sysdlg .sda .dg{color:var(--neg);font-weight:800}
 [data-theme="dark"] .mrow.sel,[data-theme="dark"] .netrow.sel{background:var(--surface-3)}
 /* Section label inside a sheet, e.g. "Current Contacts". */
-.shlab{font-size:var(--t-caption);font-weight:700;color:var(--ink-2);letter-spacing:.02em;margin:0 0 0.5rem}
+.shlab{font-size:var(--t-caption);font-weight:700;color:var(--ink-2);letter-spacing:.02em;margin:0 0 var(--sp-2)}
 .shlab.hi{font-size:var(--t-label);color:var(--ink);letter-spacing:0}
 /* Centred empty/no-results block inside a sheet. */
 .shempty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:1.625rem 0.875rem 2.375rem}
+  text-align:center;padding:1.625rem var(--sp-3-5) 2.375rem}
 /* Success summary pill: "amount -> recipient" (SuccessSummaryPill). */
-.sumpill{display:inline-flex;align-items:center;gap:0.4375rem;margin-top:0.8125rem;padding:0.5625rem 0.875rem;
+.sumpill{display:inline-flex;align-items:center;gap:0.4375rem;margin-top:0.8125rem;padding:0.5625rem var(--sp-3-5);
   border-radius:var(--radius-full);background:var(--surface-2);
   font-size:var(--t-label);font-weight:700;color:var(--ink)}
 /* Resolved recipient: the pasted address collapses into a chip that names the
@@ -1938,23 +1951,23 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
    least prominent value on the screen -- and "public" vs "private" was carried by
    hue alone. Text is --ink so the meaning survives without colour (SC 1.4.1); the
    amber lives in the wash and the rule, where it signals rather than informs. */
-.pcliff{display:flex;gap:0.5rem;align-items:flex-start;padding:0.75rem 0.875rem;
+.pcliff{display:flex;gap:var(--sp-2);align-items:flex-start;padding:var(--sp-3) var(--sp-3-5);
   border-radius:var(--radius-md);background:var(--warn-wash);color:var(--ink);
-  font-size:var(--t-label);line-height:1.45;margin:0.875rem 0 0.5rem}
+  font-size:var(--t-label);line-height:1.45;margin:var(--sp-3-5) 0 var(--sp-2)}
 .pcliff .svgic{width:1.0625rem;height:1.0625rem;flex:none;margin-top:0.0625rem;background-color:var(--warn)}
 .pcliff b{font-weight:800}
 /* Resolved recipient card. The address is a checksum you glance at, not a
    headline: it sits at label size in 4-char groups so it can actually be verified,
    with the network on the same card because those are the two facts that must be
    checked together. It replaced a 42-char hex string set as the visual hero. */
-.rcard{background:var(--surface-2);border-radius:var(--radius-md);padding:0.75rem 0.875rem}
-.rcnet{display:flex;align-items:center;gap:0.5rem;min-height:1.5rem}
+.rcard{background:var(--surface-2);border-radius:var(--radius-md);padding:var(--sp-3) var(--sp-3-5)}
+.rcnet{display:flex;align-items:center;gap:var(--sp-2);min-height:1.5rem}
 .rcnet .cdot{width:0.625rem;height:0.625rem;border-radius:50%;flex:none}
 .rcnet .nn{font-size:var(--t-label);font-weight:800;color:var(--ink)}
 .rcnet .chg{margin-left:auto;min-height:44px;display:flex;align-items:center;
   font-size:var(--t-caption);font-weight:700;color:var(--accent-ink)}
 .rcaddr{font-family:var(--mono);font-size:var(--t-label);line-height:1.5;color:var(--ink-2);
-  word-spacing:0.15em;margin-top:0.25rem}
+  word-spacing:0.15em;margin-top:var(--sp-1)}
 .rcaddr b{color:var(--ink);font-weight:700}
 /* A page title after the action bar starts a new section, so it takes --stack-loose,
    not the --stack used between components within a group. At 12px it crowded the bar. */
@@ -1963,7 +1976,7 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
      the field it labels -- physically closer to the chrome than to its own content,
      so proximity said it belonged to the bar. Reversed: a clear break from chrome,
      bound tight to what it introduces. */
-  margin-top:0.75rem;margin-bottom:0}
+  margin-top:var(--sp-3);margin-bottom:0}
 /* Camera viewfinder. Full-bleed dark regardless of theme -- a camera preview has no
    light mode. Corner brackets rather than a full rule: the frame guides aim without
    implying the code must be perfectly inscribed. */
@@ -1976,7 +1989,7 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
 [data-surface="camera"] .stat{position:relative;z-index:1;color:#fff}
 [data-surface="camera"] .hbar{background:rgba(255,255,255,.5)}
 .vfinder{position:absolute;inset:0;background:#0B0B0B;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:1.25rem}
+  align-items:center;justify-content:center;gap:var(--sp-5)}
 .vfbox{width:11.5rem;height:11.5rem;position:relative}
 .vfbox i{position:absolute;width:1.75rem;height:1.75rem;border:3px solid #FFFFFF}
 .vfbox i:nth-child(1){top:0;left:0;border-right:0;border-bottom:0;border-radius:0.5rem 0 0 0}
@@ -2013,7 +2026,7 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
    (lib/qr/format.test.ts:4, QRCode.test.tsx:47). */
 .lcount{font-family:var(--num);font-feature-settings:var(--num-feat);
   font-size:var(--t-caption);color:var(--ink-3);flex:none;margin-left:auto}
-.mrow .fam+.lcount{margin-left:0.375rem}
+.mrow .fam+.lcount{margin-left:var(--sp-1-5)}
 /* Picking a recipient IS the action, so rows advance and this step has no Confirm.
    A separate commit button asks the user to say the same thing twice -- choose
    Wiktor, then confirm choosing Wiktor -- and it made three consecutive screens
@@ -2025,12 +2038,12 @@ details.grp>summary .gn{font-family:var(--num);font-feature-settings:var(--num-f
    trails it, so the right edge reads as one group instead of the chip floating
    next to the name with a gap before the chevron. */
 .mrow .fam{margin-left:auto}
-.mrow .fam+.go{margin-left:0.375rem}
+.mrow .fam+.go{margin-left:var(--sp-1-5)}
 
 /* .fam is a static chip everywhere else; on the amount row it is also the network selector, and a
    28pt chip is not a target. The floor applies to the button form only, so the indicator form is
    not inflated for a tap it does not accept. */
-button.fam{min-height:44px;padding-inline:0.625rem}
+button.fam{min-height:44px;padding-inline:var(--sp-2-5)}
 /* Detected address family. All three are CORRECT addresses -- a Solana address is
    not a worse address than a Miden one, it is a different network. So the family
    is labelled neutrally and semantic colour is not used to grade it; green/amber/red
@@ -2041,7 +2054,7 @@ button.fam{min-height:44px;padding-inline:0.625rem}
    Format identifies the FAMILY and never the chain: an 0x string is simultaneously
    valid on every EVM network, which is why that row ends in a question. */
 .fam{display:inline-flex;align-items:center;gap:0.3125rem;
-  font-size:var(--t-caption);font-weight:800;padding:0.1875rem 0.5rem 0.1875rem 0.1875rem;
+  font-size:var(--t-caption);font-weight:800;padding:0.1875rem var(--sp-2) 0.1875rem 0.1875rem;
   border-radius:var(--radius-sm);flex:none;letter-spacing:.02em;
   background:var(--surface-2);color:var(--ink-2)}
 /* Inline network choice. "EVM" and "SVM" are jargon -- most people have never
@@ -2058,8 +2071,8 @@ button.fam{min-height:44px;padding-inline:0.625rem}
    bleed into and the rows themselves do not move. Without it the bleed overflowed .netpick by
    exactly 8px -- flagged by the reflow sweep at the AUTHORED width, not just at 320. .mlist
    already carries its own version of this for the account cards' outer rings. */
-.netpick{margin-top:calc(var(--stack-loose) - var(--stack));padding-inline:0.5rem;margin-inline:-0.5rem}
-.netpick .npq{font-size:var(--t-caption);font-weight:700;color:var(--ink-2);margin-bottom:0.5rem}
+.netpick{margin-top:calc(var(--stack-loose) - var(--stack));padding-inline:var(--sp-2);margin-inline:-0.5rem}
+.netpick .npq{font-size:var(--t-caption);font-weight:700;color:var(--ink-2);margin-bottom:var(--sp-2)}
 /* Recent is send HISTORY, not the address book, so most entries will not be
    contacts. The two cases invert: a saved contact leads with the name and
    carries the address beneath; an unsaved one has no name to lead with, so the
@@ -2095,25 +2108,25 @@ button.fam{min-height:44px;padding-inline:0.625rem}
    box of the chevron glyph -- so removing the chevron would silently have dropped them under the
    floor with nothing to catch it. review.mjs cannot: its target check matches button/a/input and
    a short class list, and .netrow is a div. */
-.netrow{display:flex;align-items:center;gap:0.625rem;padding:0.6875rem 0;min-height:44px;cursor:pointer;
+.netrow{display:flex;align-items:center;gap:var(--sp-2-5);padding:0.6875rem 0;min-height:44px;cursor:pointer;
   border-bottom:1px solid var(--rule)}
 .netrow:last-child{border-bottom:0}
 .netrow .nname{font-size:var(--t-label);font-weight:700;color:var(--ink)}
 .netrow .go{margin-left:auto}
 /* Detecting: the row that will hold the answer is present and shimmering, so the
    layout does not jump when it resolves and the wait has somewhere to live. */
-.lskel{display:flex;align-items:center;gap:0.625rem;padding:0.6875rem 0}
+.lskel{display:flex;align-items:center;gap:var(--sp-2-5);padding:0.6875rem 0}
 .lskel .sk{border-radius:var(--radius-sm);
   background:linear-gradient(90deg,var(--surface-2) 25%,var(--surface-3) 37%,var(--surface-2) 63%);
   background-size:400% 100%;animation:shimmer 1.4s ease infinite}
 .lskel .sk1{height:0.8125rem;width:58%}
-.lskel .sk2{height:0.6875rem;width:34%;margin-top:0.375rem}
+.lskel .sk2{height:0.6875rem;width:34%;margin-top:var(--sp-1-5)}
 .lskel .skc{width:1.125rem;height:1.125rem;border-radius:50%;flex:none}
 @media (prefers-reduced-motion: reduce){.lskel .sk{animation-duration:.01ms}}
 /* Token detail. A 257-line shipped screen that had no mock at all -- it is what
    tapping any asset row on Home opens. Hero balance, two coloured actions, a
    price chart with five timeframes, a token-info card and a filtered history. */
-.tkhero{display:flex;flex-direction:column;align-items:center;padding:0.5rem 0 0.25rem}
+.tkhero{display:flex;flex-direction:column;align-items:center;padding:var(--sp-2) 0 var(--sp-1)}
 /* The hero mark had NO RULE. `.ic` is authored as `.mrow .ic`, so inside .tkhero it inherited
    nothing -- no plate, no circle, no containment -- and the raw file painted itself. usdc.svg is
    a white glyph with no background, so the token detail screen rendered an invisible icon on
@@ -2130,14 +2143,14 @@ button.fam{min-height:44px;padding-inline:0.625rem}
   align-items:center;justify-content:center;background:var(--tok,var(--card-slate))}
 .tkwell .svgic{width:1.5rem;height:1.5rem;background-color:#fff}
 .tkhero .tkbal{font-family:var(--num);font-feature-settings:var(--num-feat);font-weight:800;
-  font-size:var(--t-balance);line-height:1;margin-top:0.5rem}
-.tkhero .tkfiat{font-size:var(--t-label);color:var(--ink-2);margin-top:0.25rem}
-.tkacts{display:flex;gap:0.625rem;margin-top:0.75rem}
+  font-size:var(--t-balance);line-height:1;margin-top:var(--sp-2)}
+.tkhero .tkfiat{font-size:var(--t-label);color:var(--ink-2);margin-top:var(--sp-1)}
+.tkacts{display:flex;gap:var(--sp-2-5);margin-top:var(--sp-3)}
 .tkact{flex:1;min-height:44px;border:0;border-radius:var(--radius-md);display:flex;
-  align-items:center;justify-content:center;gap:0.5rem;font-family:var(--ui);
+  align-items:center;justify-content:center;gap:var(--sp-2);font-family:var(--ui);
   font-size:var(--t-label);font-weight:700;color:#fff;cursor:pointer}
 .tkact .svgic{width:1rem;height:1rem;background-color:#fff}
-.tftabs{display:flex;gap:0.25rem;margin-top:0.625rem}
+.tftabs{display:flex;gap:var(--sp-1);margin-top:var(--sp-2-5)}
 /* 44pt, not the 32 a timeframe strip is usually drawn at. Five targets in a row
    across 350pt gives each ~66pt of width but height is the binding dimension,
    and SC 2.5.5 does not care that the control is small by convention. */
@@ -2150,9 +2163,9 @@ button.fam{min-height:44px;padding-inline:0.625rem}
    legacy) has its own successor screen deleting every one of them. Now the same object as
    .masset-h, one step down. */
 .seclab{font-family:var(--display);font-weight:800;font-size:var(--t-label);color:var(--ink-2);
-  display:block;margin:1.125rem 0 0.5rem}
-.tsteps{display:flex;flex-direction:column;gap:0.125rem;margin-top:1.125rem}
-.tstep{display:flex;align-items:center;gap:0.625rem;padding:0.5625rem 0.125rem;font-size:var(--t-label)}
+  display:block;margin:1.125rem 0 var(--sp-2)}
+.tsteps{display:flex;flex-direction:column;gap:var(--sp-0-5);margin-top:1.125rem}
+.tstep{display:flex;align-items:center;gap:var(--sp-2-5);padding:0.5625rem var(--sp-0-5);font-size:var(--t-label)}
 .tstep .tsi{width:1.125rem;height:1.125rem;flex:none;border-radius:50%;display:flex;align-items:center;
   justify-content:center}
 .tstep .tsl{flex:1;color:var(--ink-2);font-weight:600}
@@ -2177,28 +2190,28 @@ button.fam{min-height:44px;padding-inline:0.625rem}
 .tokchip img{width:1.1875rem;height:1.1875rem;border-radius:50%;flex:none}
 .tokchip .cv{color:var(--ink-3);font-weight:600}
 .bigamt{font-family:var(--num);font-feature-settings:var(--num-feat);font-weight:800;
-  font-size:var(--t-display);line-height:1;letter-spacing:-.03em;margin:0.375rem 0 0.5rem}
-.amtmeta{font-size:var(--t-caption);color:var(--ink-2);margin-bottom:1rem}
+  font-size:var(--t-display);line-height:1;letter-spacing:-.03em;margin:var(--sp-1-5) 0 var(--sp-2)}
+.amtmeta{font-size:var(--t-caption);color:var(--ink-2);margin-bottom:var(--sp-4)}
 
-.dcard{width:310px;display:flex;flex-direction:column;gap:0.625rem}
+.dcard{width:310px;display:flex;flex-direction:column;gap:var(--sp-2-5)}
 /* Money hero = the SAME graphite surface as the balance card. Metadata = the same grey
    block as every other content card. Two surfaces, both already in the app. No new ones. */
-.dcard .dhero{text-align:center;padding:1.375rem 1rem 1.25rem;border-radius:var(--radius-lg);box-shadow:var(--shadow-1)}
+.dcard .dhero{text-align:center;padding:1.375rem var(--sp-4) var(--sp-5);border-radius:var(--radius-lg);box-shadow:var(--shadow-1)}
 .dcard .tokwell{background:rgba(255,255,255,.16);box-shadow:none}
-.dmeta{background:var(--surface-2);border-radius:var(--radius-lg);padding:0.25rem}
+.dmeta{background:var(--surface-2);border-radius:var(--radius-lg);padding:var(--sp-1)}
 /* Total sits inside the same block, separated by the balance card's dashed rule —
    emphasis comes from weight, not from a bespoke coloured panel. */
-.dtot{display:flex;justify-content:space-between;gap:0.75rem;align-items:flex-start;padding:0.8125rem 0.875rem;margin:0.125rem 0.625rem 0;border-top:1px dashed var(--rule-strong)}
+.dtot{display:flex;justify-content:space-between;gap:var(--sp-3);align-items:flex-start;padding:0.8125rem var(--sp-3-5);margin:var(--sp-0-5) var(--sp-2-5) 0;border-top:1px dashed var(--rule-strong)}
 .dtot .k{font-weight:800;color:var(--ink);font-size:var(--t-label)}
 .dtot .v{font-weight:800;font-size:1rem;color:var(--ink);text-align:right;font-family:var(--num);font-feature-settings:var(--num-feat)}
-.dtot .vsub{display:block;font-size:var(--t-caption);font-weight:600;color:var(--ink-2);margin-top:0.125rem;font-family:var(--ui)}
+.dtot .vsub{display:block;font-size:var(--t-caption);font-weight:600;color:var(--ink-2);margin-top:var(--sp-0-5);font-family:var(--ui)}
 /* documented size variant — for constrained surfaces (in-flow review, small viewports) */
-.dcard.compact .dhero{padding:0.8125rem 0.875rem 0.6875rem}
-.dcard.compact .tokwell{width:2.0625rem;height:2.0625rem;margin-bottom:0.375rem}
+.dcard.compact .dhero{padding:0.8125rem var(--sp-3-5) 0.6875rem}
+.dcard.compact .tokwell{width:2.0625rem;height:2.0625rem;margin-bottom:var(--sp-1-5)}
 .dcard.compact .tokwell img{width:1.25rem;height:1.25rem}
 .dcard.compact .hamt{font-size:var(--t-cta)}
 .dcard.compact .hfiat{font-size:var(--t-caption)}
-.dcard.compact .drow{padding:0.5rem 0.8125rem}
+.dcard.compact .drow{padding:var(--sp-2) 0.8125rem}
 .dcard.compact .dtot{padding:0.5625rem 0.8125rem;margin-top:0}
 .dcard .tokwell{width:2.875rem;height:2.875rem;border-radius:50%;background:var(--surface);box-shadow:var(--shadow-1);display:flex;align-items:center;justify-content:center;margin:0 auto 0.6875rem}
 .dcard .tokwell img{width:1.75rem;height:1.75rem}
@@ -2206,7 +2219,7 @@ button.fam{min-height:44px;padding-inline:0.625rem}
 .dcard .hfiat{font-size:var(--t-label);color:var(--ink-2);margin-top:0.1875rem}
 .drow .av3{display:inline-flex;align-items:center;gap:0.4375rem}
 .drow .av3 .dot3{width:1.1875rem;height:1.1875rem;border-radius:50%;background:var(--tx-sent);flex:none}
-.drow{display:flex;justify-content:space-between;gap:0.75rem;padding:0.75rem 1rem;font-size:var(--t-label);align-items:flex-start}
+.drow{display:flex;justify-content:space-between;gap:var(--sp-3);padding:var(--sp-3) var(--sp-4);font-size:var(--t-label);align-items:flex-start}
 .drow .k{color:var(--ink-2);flex:none;padding-top:0.0625rem}
 .drow .v{font-weight:600;color:var(--ink);text-align:right}
 .drow .v.num{font-family:var(--num);font-feature-settings:var(--num-feat)}
@@ -2216,8 +2229,8 @@ button.fam{min-height:44px;padding-inline:0.625rem}
    property of the class, not of where it happens to sit. */
 .addr2{font-family:var(--mono);font-size:var(--t-label);font-weight:500}
 .drow .v.addr2{font-family:var(--mono);font-size:var(--t-label);font-weight:500}
-.drow .vsub{display:block;font-size:var(--t-caption);color:var(--ink-3);font-weight:500;margin-top:0.125rem;font-family:var(--ui)}
-.hdr{display:flex;align-items:center;gap:0.75rem;padding:0.8125rem 0.9375rem;border-radius:var(--radius-md);background:var(--surface-2);width:310px}
+.drow .vsub{display:block;font-size:var(--t-caption);color:var(--ink-3);font-weight:500;margin-top:var(--sp-0-5);font-family:var(--ui)}
+.hdr{display:flex;align-items:center;gap:var(--sp-3);padding:0.8125rem 0.9375rem;border-radius:var(--radius-md);background:var(--surface-2);width:310px}
 .hdr .bk{width:2.125rem;height:2.125rem;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;flex:none;font-size:var(--t-body)}
 .hdr .ht{font-family:var(--display);font-weight:800;font-size:var(--t-subhead)}
 .hdr.tab .ht{font-size:var(--t-heading)}
@@ -2225,26 +2238,26 @@ button.fam{min-height:44px;padding-inline:0.625rem}
 .bnr.info{background:var(--surface-2);color:var(--ink)}
 .bnr.warn2{background:var(--accent-wash);color:var(--accent-ink)}
 .bnr.danger{background:color-mix(in srgb,var(--neg) 13%,transparent);color:var(--neg)}
-.bnr b{display:block;margin-bottom:0.125rem}
-.stbox{border:1px dashed var(--rule-strong);border-radius:var(--radius-md);padding:1.5rem 1.125rem;text-align:center;width:210px}
+.bnr b{display:block;margin-bottom:var(--sp-0-5)}
+.stbox{border:1px dashed var(--rule-strong);border-radius:var(--radius-md);padding:var(--sp-6) 1.125rem;text-align:center;width:210px}
 .stbox .st{font-family:var(--display);font-weight:800;font-size:var(--t-body)}
 .stbox .ss{font-size:var(--t-label);color:var(--ink-2);margin-top:0.3125rem;line-height:1.4}
-.pad{display:grid;grid-template-columns:repeat(3,76px);justify-content:center;gap:0.875rem 1.625rem;margin-inline:auto}
+.pad{display:grid;grid-template-columns:repeat(3,76px);justify-content:center;gap:var(--sp-3-5) 1.625rem;margin-inline:auto}
 /* The pad sat 8pt from Confirm and 35pt from the figure -- the wrong way round, since an
    accidental Confirm costs money and an accidental digit does not. Only margin-BOTTOM here:
    .pad.pinned uses margin-top:auto to push itself down, and setting margin-top overrode that,
    which detached the whole stack from the bottom and drove Confirm into the safe area. */
-.amtblk + .pad{margin-bottom:1.25rem}
+.amtblk + .pad{margin-bottom:var(--sp-5)}
 /* The cross-chain variant carries one more row, and the amount block above it is fixed by design,
    so the room comes out of the pad's bottom margin. margin-BOTTOM only -- .pad.pinned uses
    margin-top:auto to sit on the bottom, and setting margin-top overrides it, which detaches the
    stack and pushes Confirm off the frame. That is the second time; the rule is that nothing may
    set margin-top on .pad. */
-.amtblk:has(.routerow) + .pad{margin-bottom:0.25rem;row-gap:0.4375rem}
-.amtblk:has(.routerow) .availrow{margin-top:0.375rem}
-.amtblk:has(.routerow) .routerow{margin-top:0.25rem}
+.amtblk:has(.routerow) + .pad{margin-bottom:var(--sp-1);row-gap:0.4375rem}
+.amtblk:has(.routerow) .availrow{margin-top:var(--sp-1-5)}
+.amtblk:has(.routerow) .routerow{margin-top:var(--sp-1)}
 /* keypad as the last element must clear the home indicator itself */
-.pad.pinned{margin-top:auto;padding-bottom:max(1rem,var(--safe-bottom,0))}
+.pad.pinned{margin-top:auto;padding-bottom:max(var(--sp-4),var(--safe-bottom,0))}
 /* EXTENSION POPUP — 360x600, the hardest viewport. No notch, no home indicator,
    so --safe-bottom collapses to 0 and env() would too. */
 .phone.ext{width:360px;border-radius:var(--radius-lg);padding:0;box-shadow:var(--shadow-2)}
@@ -2252,8 +2265,8 @@ button.fam{min-height:44px;padding-inline:0.625rem}
 .phone.ext .notch,.phone.ext .mock::after{display:none}
 .phone.ext .mock{--safe-bottom:0px}
 .extbar{display:flex;align-items:center;gap:8px;padding:9px 0 12px;font-size:var(--t-caption);color:var(--ink-2)}
-pre.code{background:var(--code-bg);border-radius:var(--radius-md);padding:0.875rem 1rem;overflow-x:auto;
-  margin-top:0.75rem;border:1px solid var(--rule)}
+pre.code{background:var(--code-bg);border-radius:var(--radius-md);padding:var(--sp-3-5) var(--sp-4);overflow-x:auto;
+  margin-top:var(--sp-3);border:1px solid var(--rule)}
 pre.code code{background:none;padding:0;font-family:var(--mono);font-size:var(--t-caption);line-height:1.65;
   color:var(--ink);white-space:pre}
 /* ── PAGE TRANSITIONS ────────────────────────────────────────────────────────
@@ -2263,7 +2276,7 @@ pre.code code{background:none;padding:0;font-family:var(--mono);font-size:var(--
    transform + opacity ONLY; never left/top/width/height. */
 .ptstage{position:relative;height:180px;border-radius:var(--radius-md);overflow:hidden;
   background:var(--surface-2);isolation:isolate}
-.ptpane{position:absolute;inset:0;background:var(--surface);padding:0.875rem;display:flex;flex-direction:column;gap:0.4375rem;
+.ptpane{position:absolute;inset:0;background:var(--surface);padding:var(--sp-3-5);display:flex;flex-direction:column;gap:0.4375rem;
   will-change:transform,opacity}
 .ptpane .pth{font-family:var(--display);font-weight:800;font-size:var(--t-body)}
 .ptpane .ptl{height:0.5rem;border-radius:5px;background:var(--surface-3)}
@@ -2314,22 +2327,22 @@ pre.code code{background:none;padding:0;font-family:var(--mono);font-size:var(--
   -webkit-backdrop-filter:blur(0.25rem);backdrop-filter:blur(4px)}
 [data-theme="dark"] .shscrim{background:rgba(0,0,0,.55)}
 .sheetc{position:relative;width:100%;background:var(--surface);border-radius:var(--radius-lg) var(--radius-lg) 0 0;
-  box-shadow:var(--shadow-2);padding:0.5rem 1.25rem 1.125rem;max-height:94%;overflow:hidden}
-.sheetc .shandle{width:2.5rem;height:0.25rem;border-radius:var(--radius-full);background:var(--rule-strong);margin:0 auto 0.75rem}
+  box-shadow:var(--shadow-2);padding:var(--sp-2) var(--sp-5) 1.125rem;max-height:94%;overflow:hidden}
+.sheetc .shandle{width:2.5rem;height:0.25rem;border-radius:var(--radius-full);background:var(--rule-strong);margin:0 auto var(--sp-3)}
 .sheetc .shttl{font-family:var(--display);font-weight:800;font-size:var(--t-subhead);color:var(--ink)}
 .sheetc .shsub{font-size:var(--t-label);color:var(--ink-2);line-height:1.5;margin-top:0.4375rem}
 /* Divider inside a sheet. Full-bleed, so the negative margin has to match
    the host sheet's own padding -- hence a rule per sheet shell. */
 .shdiv{height:0.0625rem;background:var(--rule);margin:0.9375rem 0}
 .sheetc .shdiv{margin:0.9375rem -1.25rem}
-.msheet .shdiv{margin:0.875rem -1rem}
+.msheet .shdiv{margin:var(--sp-3-5) -1rem}
 .sheetc .shrow{display:flex;align-items:center;gap:0.6875rem;padding:0.5625rem 0}
 .sheetc .shrow+.shrow{border-top:1px solid var(--rule)}
 .sheetc .shav{width:2rem;height:2rem;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .sheetc .shav img{width:2rem;height:2rem}
 .sheetc .shnm{font-weight:700;font-size:var(--t-label)}
 .sheetc .shmeta{font-size:var(--t-caption);color:var(--ink-2)}
-.sheetc .shft{margin-top:0.875rem}
+.sheetc .shft{margin-top:var(--sp-3-5)}
 .sheetc .shft .btn{width:100%;min-height:52px}
 /* INFO SHEET — the canonical "additional info" surface. Bottom sheet, fit-to-content,
    so the screen behind stays visible: context preservation is the reason, NOT reach.
@@ -2339,7 +2352,7 @@ pre.code code{background:none;padding:0;font-family:var(--mono);font-size:var(--
   padding:14px 20px max(16px,var(--safe-bottom,0px));max-height:78%;overflow:hidden;z-index:5}
 .isrow{padding:0.6875rem 0}
 .isrow+.isrow{border-top:1px solid var(--rule)}
-.ish{display:flex;align-items:center;gap:0.5rem;font-family:var(--display);font-weight:800;font-size:var(--t-label)}
+.ish{display:flex;align-items:center;gap:var(--sp-2);font-family:var(--display);font-weight:800;font-size:var(--t-label)}
 .isb{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   flex:none;font-size:var(--t-caption);font-weight:800;color:var(--paper);line-height:1}
 .isdd{font-size:var(--t-caption);color:var(--ink-2);line-height:1.45;margin-top:3px}
@@ -2347,7 +2360,7 @@ pre.code code{background:none;padding:0;font-family:var(--mono);font-size:var(--
 .pad button{width:4.75rem;height:4.75rem;border:0;border-radius:50%;background:var(--surface-2);font-family:var(--ui);font-size:1.625rem;font-weight:500;color:var(--ink);cursor:pointer;justify-self:center;
   transition:transform var(--dur-fast) ease,background var(--dur-fast) ease}
 .pad button:active{transform:scale(.94);background:var(--surface-3)}
-.dots{display:flex;gap:0.6875rem;justify-content:center;margin-bottom:0.875rem}
+.dots{display:flex;gap:0.6875rem;justify-content:center;margin-bottom:var(--sp-3-5)}
 .dots i{width:0.75rem;height:0.75rem;border-radius:50%;background:var(--surface-3);display:block;transition:background var(--dur-base) ease,transform var(--dur-base) var(--ease-spatial)}
 .dots i.f{background:var(--accent);transform:scale(1.12)}
 /* Authored as a div, now a button, so it has to reset what a button brings with it: a UA
@@ -2355,24 +2368,24 @@ pre.code code{background:none;padding:0;font-family:var(--mono);font-size:var(--
    Left as-is it rendered the address black on the dark surface at 1.48:1 -- the div→button trap,
    caught by the contrast sweep. Nothing about the look changes; the element just stops lying
    about being text. */
-.addrbox{background:var(--surface-2);border-radius:var(--radius-md);padding:0.8125rem 0.9375rem;width:310px;display:flex;align-items:center;gap:0.625rem;border:0;color:var(--ink);font:inherit;text-align:left;min-height:44px;cursor:pointer}
+.addrbox{background:var(--surface-2);border-radius:var(--radius-md);padding:0.8125rem 0.9375rem;width:310px;display:flex;align-items:center;gap:var(--sp-2-5);border:0;color:var(--ink);font:inherit;text-align:left;min-height:44px;cursor:pointer}
 .addrbox .a{font-family:var(--mono);font-size:var(--t-label);flex:1}
 .pbar{height:0.4375rem;border-radius:var(--radius-full);background:var(--surface-3);overflow:hidden;width:270px}
 .pbar i{display:block;height:100%;background:var(--accent);border-radius:var(--radius-full);transition:width var(--dur-spatial) var(--ease-spatial)}
 .skel2{height:0.8125rem;border-radius:var(--radius-sm);background:linear-gradient(90deg,var(--surface-2) 25%,var(--surface-3) 37%,var(--surface-2) 63%);background-size:400% 100%;animation:shimmer var(--dur-loop-shimmer) ease-in-out infinite;margin:0.4375rem 0}
 /* ---- component motion library ---- */
-.cmgrid{display:grid;grid-template-columns:1fr 1fr;gap:0.875rem;margin-top:0.875rem}
+.cmgrid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-3-5);margin-top:var(--sp-3-5)}
 .cm{background:var(--surface);border:1px solid var(--rule);border-radius:var(--radius-lg);padding:1.125rem}
-.cm .cmh{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.875rem;flex-wrap:wrap}
+.cm .cmh{display:flex;align-items:center;gap:var(--sp-2);margin-bottom:var(--sp-3-5);flex-wrap:wrap}
 .cm .cmt{font-family:var(--display);font-weight:800;font-size:var(--t-body)}
-.cm .cmf{font-family:var(--mono);font-size:0.59375rem;padding:0.125rem 0.4375rem;border-radius:var(--radius-sm);letter-spacing:.02em}
+.cm .cmf{font-family:var(--mono);font-size:0.59375rem;padding:var(--sp-0-5) 0.4375rem;border-radius:var(--radius-sm);letter-spacing:.02em}
 .cmf.freq{background:var(--surface-2);color:var(--ink-2)}
 .cmf.rare{background:var(--accent-wash);color:var(--accent-ink)}
-.cm .cmd{font-size:var(--t-label);color:var(--ink-2);margin-top:0.75rem;line-height:1.45}
-.cm .go{margin-top:0.75rem;font-size:var(--t-label);font-weight:700;color:var(--accent-ink);background:none;border:0;padding:0;cursor:pointer}
+.cm .cmd{font-size:var(--t-label);color:var(--ink-2);margin-top:var(--sp-3);line-height:1.45}
+.cm .go{margin-top:var(--sp-3);font-size:var(--t-label);font-weight:700;color:var(--accent-ink);background:none;border:0;padding:0;cursor:pointer}
 .cu{font-family:var(--num);font-feature-settings:var(--num-feat);font-weight:800;font-size:1.875rem;letter-spacing:-.02em}
-.copybtn{display:inline-flex;align-items:center;gap:0.5rem;background:var(--surface-2);border:0;
-  border-radius:var(--radius-md);padding:0.625rem 0.8125rem;cursor:pointer;font-family:var(--mono);font-size:var(--t-label);
+.copybtn{display:inline-flex;align-items:center;gap:var(--sp-2);background:var(--surface-2);border:0;
+  border-radius:var(--radius-md);padding:var(--sp-2-5) 0.8125rem;cursor:pointer;font-family:var(--mono);font-size:var(--t-label);
   color:var(--ink);min-height:44px;
   /* the SIZE change is animated, not snapped. Width is measured once in JS and set as a
      custom property, so the chip eases between its two natural widths instead of
@@ -2407,7 +2420,7 @@ pre.code code{background:none;padding:0;font-family:var(--mono);font-size:var(--
 }
 .spin{width:1.0625rem;height:1.0625rem;border-radius:50%;border:2.5px solid rgba(255,255,255,.4);border-top-color:var(--pure-white);animation:spin var(--dur-loop-spin) linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.morph{display:inline-flex;align-items:center;font-weight:700;font-size:var(--t-cta);font-family:var(--ui);color:var(--on-accent);background:var(--accent);border:0;border-radius:var(--radius-full);padding:0.875rem 1.625rem;cursor:pointer}
+.morph{display:inline-flex;align-items:center;font-weight:700;font-size:var(--t-cta);font-family:var(--ui);color:var(--on-accent);background:var(--accent);border:0;border-radius:var(--radius-full);padding:var(--sp-3-5) 1.625rem;cursor:pointer}
 .morph .tail{display:inline-block;overflow:hidden;white-space:nowrap;max-width:5rem;transition:max-width var(--dur-base) var(--ease-spatial),opacity var(--dur-base) ease}
 .morph .tail.hide{max-width:0;opacity:0}
 .stp{display:flex;align-items:center;gap:0.6875rem;padding:0.4375rem 0}
@@ -2417,7 +2430,7 @@ pre.code code{background:none;padding:0;font-family:var(--mono);font-size:var(--
 .stp.done .dot{background:var(--pos);color:var(--paper)}
 .stp .sl{font-size:var(--t-label);color:var(--ink-3);transition:color var(--dur-base) ease}
 .stp.on .sl,.stp.done .sl{color:var(--ink);font-weight:600}
-.okwrap{display:flex;justify-content:center;padding:0.25rem 0}
+.okwrap{display:flex;justify-content:center;padding:var(--sp-1) 0}
 .okc{width:3.875rem;height:3.875rem}
 .okc circle{stroke:var(--pos);stroke-width:3;fill:none;stroke-dasharray:170;stroke-dashoffset:170}
 .okc path{stroke:var(--pos);stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:50;stroke-dashoffset:50}
@@ -2425,38 +2438,38 @@ pre.code code{background:none;padding:0;font-family:var(--mono);font-size:var(--
 .okwrap.go path{animation:draw var(--dur-spatial) var(--ease-spatial) var(--dur-spatial) forwards}
 @keyframes draw{to{stroke-dashoffset:0}}
 .toastzone{position:relative;height:4.75rem;overflow:hidden;border-radius:var(--radius-md);background:var(--surface-2)}
-.toast{position:absolute;left:0.75rem;right:0.75rem;bottom:0.75rem;background:var(--ink);color:var(--paper);border-radius:var(--radius-md);padding:0.6875rem 0.875rem;font-size:var(--t-label);font-weight:600;
+.toast{position:absolute;left:0.75rem;right:0.75rem;bottom:0.75rem;background:var(--ink);color:var(--paper);border-radius:var(--radius-md);padding:0.6875rem var(--sp-3-5);font-size:var(--t-label);font-weight:600;
   transform:translateY(90px);opacity:0;transition:transform var(--dur-spatial) var(--ease-spatial),opacity var(--dur-base) ease}
 .toastzone.show .toast{transform:none;opacity:1}
-.stag .srow2{display:flex;align-items:center;gap:0.625rem;padding:0.4375rem 0;opacity:0}
+.stag .srow2{display:flex;align-items:center;gap:var(--sp-2-5);padding:0.4375rem 0;opacity:0}
 .stag.go .srow2{animation:rowin var(--dur-spatial) var(--ease-spatial) both}
 @keyframes rowin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .stag .av2{width:1.625rem;height:1.625rem;border-radius:50%;background:var(--surface-3);flex:none}
 .stag .ln{height:0.5625rem;border-radius:var(--radius-sm);background:var(--surface-3)}
 @media (prefers-reduced-motion: reduce){.spin,.stag.go .srow2,.okwrap.go circle,.okwrap.go path{animation-duration:.01ms}.morph .tail,.stp .dot,.toast{transition-duration:.01ms}}
 /* number-font chooser + onboarding reference */
-.numopt .minicard{border-radius:var(--radius-md);padding:0.875rem 1rem}
+.numopt .minicard{border-radius:var(--radius-md);padding:var(--sp-3-5) var(--sp-4)}
 [data-theme="dark"] .numopt .minicard{background:#101010;border:1px solid var(--rule)}
 .numopt .mtl{font-size:var(--t-caption);color:var(--ink-2);font-weight:600}
-.numopt .mbig{font-size:1.875rem;letter-spacing:-.02em;margin-top:0.375rem;font-feature-settings:'tnum' 1;color:var(--pure-white);white-space:nowrap}
-.numopt .maddr{font-family:var(--mono);font-size:var(--t-caption);color:var(--ink-2);margin-top:0.625rem}
-.numopt .nopt{margin-top:0.625rem;font-size:var(--t-label);color:var(--ink-2)}
+.numopt .mbig{font-size:1.875rem;letter-spacing:-.02em;margin-top:var(--sp-1-5);font-feature-settings:'tnum' 1;color:var(--pure-white);white-space:nowrap}
+.numopt .maddr{font-family:var(--mono);font-size:var(--t-caption);color:var(--ink-2);margin-top:var(--sp-2-5)}
+.numopt .nopt{margin-top:var(--sp-2-5);font-size:var(--t-label);color:var(--ink-2)}
 .numopt .nopt b{color:var(--ink);font-family:var(--display)}
-.numopt .nopt span{display:block;font-size:var(--t-caption);margin-top:0.125rem}
+.numopt .nopt span{display:block;font-size:var(--t-caption);margin-top:var(--sp-0-5)}
 .obshot{border:1px solid var(--rule);border-radius:var(--radius-md);overflow:hidden;background:var(--surface)}
 .obshot img{width:100%;display:block}
 .obshot span{display:block;font-size:var(--t-label);color:var(--ink-2);text-align:center;padding:7px;font-weight:600}
 /* button placement — action zone */
-.azrow{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:0.875rem}
-.azframe{border:1px solid var(--rule);border-radius:var(--radius-lg);background:var(--paper);height:340px;position:relative;overflow:hidden;padding:1.5rem 1.125rem 0;display:flex;flex-direction:column}
+.azrow{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5);margin-top:var(--sp-3-5)}
+.azframe{border:1px solid var(--rule);border-radius:var(--radius-lg);background:var(--paper);height:340px;position:relative;overflow:hidden;padding:var(--sp-6) 1.125rem 0;display:flex;flex-direction:column}
 .azframe .azh{font-family:var(--display);font-weight:900;font-size:1.3125rem;line-height:1.05}
-.azframe .azp{color:var(--ink-2);font-size:var(--t-label);margin-top:0.5rem}
+.azframe .azp{color:var(--ink-2);font-size:var(--t-label);margin-top:var(--sp-2)}
 .azrow .azguideline{position:absolute;left:-0.5rem;right:-0.5rem;bottom:4.125rem;border-top:1.5px dashed var(--accent);pointer-events:none;z-index:2}
-.azrow .azguideline span{position:absolute;right:0;top:-0.5625rem;font-family:var(--mono);font-size:0.625rem;color:var(--accent-ink);background:var(--paper);padding:0 0.375rem}
-.azzone{position:absolute;left:0;right:0;bottom:0;padding:0 1.125rem 1rem}
+.azrow .azguideline span{position:absolute;right:0;top:-0.5625rem;font-family:var(--mono);font-size:0.625rem;color:var(--accent-ink);background:var(--paper);padding:0 var(--sp-1-5)}
+.azzone{position:absolute;left:0;right:0;bottom:0;padding:0 1.125rem var(--sp-4)}
 .azzone .btn-primary{width:100%;text-align:center}
 .azzone .azghost{min-height:44px;display:flex;align-items:center;justify-content:center;color:var(--ink-3);font-size:var(--t-label);font-weight:600}
-@media(max-width:1080px){.app{grid-template-columns:1fr}.sidebar{display:none}.main{padding:2rem 1.375rem 5.625rem}.compare,.grid2{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}}
+@media(max-width:1080px){.app{grid-template-columns:1fr}.sidebar{display:none}.main{padding:var(--sp-8) 1.375rem 5.625rem}.compare,.grid2{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>

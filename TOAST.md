@@ -118,8 +118,11 @@ a mobile design system the product is the only relevant reference.
 1. **Their bordered secondary.** "Use in store", "Details", "Add", the filter chips and the
    time-slot pills are all white with a hairline border, and one card is emphasised with a 2px
    near-black border. The primary-filled + secondary-bordered *pair* is their single most repeated
-   action pattern — it is on every screen. It also contradicts this system's standing rule that
-   every action is filled or ghost, never outlined. **Open question, not a silent decision.**
+   action pattern — it is on every screen. **Decided: not adopted.** The pair exists to give a
+   secondary action visible weight next to a filled primary, and Crust already solves that with a
+   filled neutral (`--surface-2`) — same hierarchy, no outline. Toast's border is house style, not
+   a requirement of the pattern, and adopting it would mean reversing a rule that holds everywhere
+   else in the system for the sake of matching one reference.
 2. **The orange chip with small white uppercase text** (`208 POINTS`). That is the 3.00:1 problem
    again at a size where it cannot possibly conform. If we want an orange chip it takes a near-black
    label, exactly as `--on-accent-sm` already does.

@@ -52,6 +52,27 @@ const lintIcons = dir => {
   return bad;
 };
 
+// Spacing-scale lint. The system had 35 distinct rem values across its spacing declarations --
+// every pixel from 1 to 16 -- which is a 1px grid, i.e. no grid: each value was picked by nudging
+// and nothing stopped the next being 11px. The scale is now named, and everything that already sat
+// on it was migrated with zero movement. This counts what is still off it.
+// Reported rather than failed: the residue is deliberate (paired values like .mlist's 9px inline
+// padding cancelling a 9px negative margin), and snapping it would churn tuned geometry for no
+// visible gain. The number's job is to stay visible so it shrinks rather than quietly grows.
+const SPACE_PROPS = /(?:padding|margin|gap|row-gap|column-gap|inset)(?:-(?:top|right|bottom|left|inline|block))?/;
+const lintSpacing = file => {
+  const css = readFileSync(file, 'utf8').split('<style>')[1]?.split('</style>')[0] ?? '';
+  const seen = new Map();
+  const re = new RegExp(`(${SPACE_PROPS.source})\\s*:\\s*([^;}]+)`, 'g');
+  for (const m of css.matchAll(re)) {
+    for (const v of m[2].matchAll(/(?<![\w.-])(\d*\.?\d+)rem\b/g)) {
+      const px = parseFloat(v[1]) * 16;
+      seen.set(px, (seen.get(px) ?? 0) + 1);
+    }
+  }
+  return [...seen].sort((a, b) => b[1] - a[1]);
+};
+
 const URL = process.env.DS_URL ?? 'http://localhost:4599';
 const SHOT = process.argv.includes('--shot') ? process.argv[process.argv.indexOf('--shot') + 1] : null;
 const SAFE_BOTTOM = 34; // iPhone 17 home-indicator reserve, in points
@@ -493,6 +514,13 @@ const run = async () => {
     structure.orphan.forEach(t => console.log(`      orphan      : ${t} — outside every sub-group`));
   }
 
+  const offScale = lintSpacing('design-system/index.html');
+  const offScaleTotal = offScale.reduce((n, [, c]) => n + c, 0);
+  if (offScale.length) {
+    console.log(`\n  ! OFF-SCALE SPACING — ${offScaleTotal} uses across ${offScale.length} values not on the --sp-* scale:`);
+    console.log(`      ${offScale.slice(0, 10).map(([px, n]) => `${px}px×${n}`).join('  ')}${offScale.length > 10 ? '  …' : ''}`);
+  }
+
   const unpaintable = lintIcons('design-system/assets/icons');
   if (unpaintable.length) {
     console.log(`\n  \u2717 UNPAINTABLE ICONS (fill="none", no stroke -> invisible under a mask):`);
@@ -547,6 +575,7 @@ const run = async () => {
   console.log(`  reflow breaks   : ${broke.size}   (screens overflowing at ${WIDTHS.join('/')}${reflows ? '' : ' — CHECK INERT'})`);
   console.log(`  unpaintable svg : ${unpaintable.length}   (invisible under a CSS mask)`);
   console.log(`  structure       : ${structural}   (stale/empty group counts, orphan screens)`);
+  console.log(`  off-scale space : ${offScaleTotal}   (raw rem in a spacing property, ${offScale.length} distinct)`);
   if (errors.length) console.log(`  console errors  : ${errors.length} → ${errors[0]}`);
   console.log(`${'─'.repeat(64)}`);
 

@@ -215,6 +215,32 @@ accessible behaviour and the `inflated @200%` check tracks it separately.
 
 ---
 
+## Spacing comes from the scale
+
+`--sp-0-5` … `--sp-8` — 2/4/6/8/10/12/14/16/20/24/32px. Tailwind's shape: a 4px base with 2px
+half-steps.
+
+**Why it had to be named.** Before this, the system had **35 distinct rem values across 592
+spacing declarations** — every pixel from 1 to 16 — against **11** uses of a `--stack` token. That
+is a 1px grid, which is another way of saying no grid: every value was arrived at by nudging, and
+nothing stopped the next one being 11px.
+
+**Why the migration moved nothing.** The scale was chosen so that ~65% of existing uses already sat
+on it *exactly*, and only those were migrated — 359 literals swapped for tokens with the same
+computed value. Verified by capturing all **5767 boxes** in the page before and after and diffing
+them: 15 differed, by a maximum of **0.02px**, which is subpixel rounding and not movement.
+
+**Why 201 uses are still off it, on purpose.** The residue is odd-pixel values that are load-bearing
+in pairs — `.mlist`'s 9px inline padding exists to cancel a 9px negative margin, the selection pip's
+offset is half a line-height. Snapping those would break the pairing to satisfy a token, and change
+tuned geometry for nothing a user could see. `review.mjs` reports the count (`off-scale space`) so
+it stays visible and shrinks rather than quietly growing.
+
+**New spacing uses a token.** If nothing on the scale fits, that is a signal to check whether the
+value is really necessary before adding a step.
+
+---
+
 ## A fill is decoration; something else is the state
 
 **A selected row is not a filled row.** The fill is how selection *looks*; it is never what makes
