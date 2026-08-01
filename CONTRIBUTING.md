@@ -33,6 +33,21 @@ preferences — each one is a defect class that shipped, or nearly did:
 If a check fires, fix the design. Relaxing the check to make it pass defeats the only thing that
 makes this a system rather than a mood board.
 
+### The baseline
+
+Two kinds of check. Contrast, targets, clipping, wrapped labels and structure must be **zero** —
+a screen that fails one of those is a defect introduced now.
+
+The rest are inherited: 45 elements that inflate past 2.5× at 200% text, 10 screens that overflow
+at 320px, 5 icons that paint nothing under a mask, and 212 spacing values still off the scale.
+They are real, they predate the harness, and a permanently red build teaches everyone to ignore
+the build. So they live in `tools/review-baseline.json` and **may only go down**:
+
+- regress one and CI fails, naming the number that moved
+- improve one and the run says so — lower the file in the same commit
+
+Never raise a number in that file to make a build pass.
+
 ## Editing
 
 Everything lives in `site/index.html`: tokens in the `<style>` block, then foundations,

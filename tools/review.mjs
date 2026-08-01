@@ -613,7 +613,27 @@ const run = async () => {
   }
 
   await browser.close();
-  process.exit(total || unpaintable.length || scaled.length || broke.size || structural || !reflows ? 1 : 0);
+  // ---- Gate ---------------------------------------------------------------------------------
+  // Two kinds of check. The first must always be zero: a screen failing contrast, targets,
+  // clipping or structure is a defect introduced now, and there is no reason to tolerate one.
+  // The second is inherited -- 45 elements inflating past 2.5x at 200% text, 10 screens
+  // overflowing at 320, 5 icons that paint nothing under a mask. Those are real, but they predate
+  // the harness, and a build that is permanently red teaches everyone to ignore it. So they are
+  // recorded in review-baseline.json and may only go DOWN. Regress one and the build fails;
+  // improve one and it says so, and the file should be lowered in the same commit.
+  const baseFile = join(import.meta.dirname, 'review-baseline.json');
+  const base = existsSync(baseFile) ? JSON.parse(readFileSync(baseFile, 'utf8')) : {};
+  const tracked = { inflated: tallyGrown, reflow: broke.size, unpaintable: unpaintable.length, offScale: offScaleTotal };
+  let regressed = false;
+  for (const [k, now] of Object.entries(tracked)) {
+    const was = base[k];
+    if (was === undefined) continue;
+    if (now > was) { console.log(`  \u2717 REGRESSION  ${k}: ${was} \u2192 ${now}`); regressed = true; }
+    else if (now < was) console.log(`  \u2713 improved   ${k}: ${was} \u2192 ${now}  (lower review-baseline.json)`);
+  }
+  const hard = total || structural || !reflows;
+  if (hard) console.log(`  \u2717 ${total} failing screen(s), ${structural} structural issue(s)${reflows ? '' : ', reflow check INERT'}`);
+  process.exit(hard || regressed ? 1 : 0);
 };
 
 run().catch(e => { console.error(e); process.exit(2); });

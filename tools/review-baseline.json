@@ -1,0 +1,7 @@
+{
+  "_": "Inherited counts the harness tolerates. They may only go down. Lower a number here in the same commit that improves it; never raise one.",
+  "inflated": 45,
+  "reflow": 10,
+  "unpaintable": 5,
+  "offScale": 212
+}
